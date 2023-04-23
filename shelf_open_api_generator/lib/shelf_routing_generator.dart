@@ -9,6 +9,7 @@ import 'package:source_gen/source_gen.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 Builder buildRouting(BuilderOptions options) {
+  SharedPartBuilder;
   return LibraryBuilder(
     const RoutingGenerator(),
     generatedExtension: '.routing.dart',
