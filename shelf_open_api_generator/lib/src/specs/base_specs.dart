@@ -1,0 +1,284 @@
+import 'package:build/build.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:shelf_open_api_generator/src/specs/info_specs.dart';
+import 'package:shelf_open_api_generator/src/specs/ref_or_specs.dart';
+import 'package:shelf_open_api_generator/src/specs/schema.dart';
+import 'package:shelf_open_api_generator/src/specs/security_open_api.dart';
+import 'package:shelf_open_api_generator/src/specs/specs_serialization.dart';
+import 'package:shelf_open_api_generator/src/specs/utils.dart';
+
+part 'base_specs.g.dart';
+
+/// Documentation: https://swagger.io/specification
+///
+/// Version: 3.0.3
+@SpecsSerializable()
+class OpenApi with PrettyJsonToString {
+  final String openapi;
+  final InfoOpenApi info;
+  @JsonKey(toJson: $nullIfEmpty)
+  final List<ServerOpenApi> servers;
+
+  /// Endpoint path
+  final Map<String, ItemPathOpenApi> paths;
+  // final SecurityOpenApi security;
+  final ComponentsOpenApi components;
+
+  final List<TagOpenApi> tags;
+  // final ExternalDocsOpenApi externalDocs;
+
+  const OpenApi({
+    required this.openapi,
+    required this.info,
+    this.servers = const [],
+    required this.paths,
+    required this.components,
+    this.tags = const [],
+  });
+
+  factory OpenApi.fromJson(Map<String, dynamic> map) => _$OpenApiFromJson(map);
+  @override
+  Map<String, dynamic> toJson() => _$OpenApiToJson(this);
+}
+
+@SpecsSerializable()
+class ItemPathOpenApi with PrettyJsonToString {
+  final String? summary;
+  final String? description;
+
+  final OperationOpenApi? get;
+  final OperationOpenApi? put;
+  final OperationOpenApi? post;
+  final OperationOpenApi? delete;
+  // final MethodOpenApi? options;
+  final OperationOpenApi? head;
+  final OperationOpenApi? patch;
+  // final MethodOpenApi? trace;
+  // final List<ServerOpenApi>? servers;
+  // final List<RefOrParamOpenApiConverter>? parameters;
+
+  const ItemPathOpenApi({
+    this.summary,
+    this.description,
+    this.get,
+    this.put,
+    this.post,
+    this.delete,
+    this.head,
+    this.patch,
+  });
+
+  factory ItemPathOpenApi.from({
+    String? summary,
+    String? description,
+    required Map<String, OperationOpenApi> operations,
+  }) {
+    final usedOperations = operations.map((key, value) => MapEntry(key.toLowerCase(), value));
+    final instance = ItemPathOpenApi(
+      summary: summary,
+      description: description,
+      get: usedOperations.remove('get'),
+      put: usedOperations.remove('put'),
+      post: usedOperations.remove('post'),
+      delete: usedOperations.remove('delete'),
+      head: usedOperations.remove('head'),
+      patch: usedOperations.remove('patch'),
+    );
+    if (usedOperations.isNotEmpty) {
+      log.warning('Not consumed all item path methods: ${usedOperations.keys}');
+    }
+    return instance;
+  }
+
+  Map<String, OperationOpenApi> get operations => {
+        if (get != null) 'get': get!,
+        if (put != null) 'put': put!,
+        if (post != null) 'post': post!,
+        if (delete != null) 'delete': delete!,
+        if (head != null) 'head': head!,
+        if (patch != null) 'patch': patch!,
+      };
+
+  factory ItemPathOpenApi.fromJson(Map<String, dynamic> map) => _$ItemPathOpenApiFromJson(map);
+  @override
+  Map<String, dynamic> toJson() => _$ItemPathOpenApiToJson(this);
+}
+
+/// Version: 3.0.3
+@SpecsSerializable()
+class OperationOpenApi with PrettyJsonToString {
+  @JsonKey(toJson: $nullIfEmpty)
+  final List<String> tags;
+  final String? summary;
+  final String? description;
+  // final ExternalDocumentOpenApi externalDocs;
+
+  final String? operationId;
+
+  @JsonKey(toJson: $nullIfEmpty)
+  final List<RefOrOpenApi<ParameterOpenApi>> parameters;
+  final RequestBodyOpenApi? requestBody;
+
+  /// Map<String | int, ResponseOpenApi>
+  final Map<int, ResponseOpenApi> responses;
+
+  // final Map<String, RefOpenApi<CallbackOpenApi>> callbacks;
+
+  @JsonKey(toJson: $nullIfFalse)
+  final bool deprecated;
+
+  @JsonKey(toJson: $nullIfEmpty)
+  final Map<String, List<String>> security;
+  // final List<ServerOpenApi> servers;
+
+  const OperationOpenApi({
+    this.tags = const [],
+    this.summary,
+    this.description,
+    required this.operationId,
+    this.parameters = const [],
+    this.requestBody,
+    required this.responses,
+    this.deprecated = false,
+    this.security = const {},
+  });
+
+  bool get hasSummary => summary != null && summary!.trim().isNotEmpty;
+  bool get hasDescription => description != null && description!.trim().isNotEmpty;
+
+  // ResponseOpenApi? get successResponse =>
+  //     responses.singleWhereOrNull((code, _) => code >= 200 && code < 300)?.value;
+
+  factory OperationOpenApi.fromJson(Map<String, dynamic> map) => _$OperationOpenApiFromJson(map);
+  @override
+  Map<String, dynamic> toJson() => _$OperationOpenApiToJson(this);
+}
+
+// ====================  PARAMETERS
+
+@JsonEnum()
+enum ParameterInOpenApi { path, query, header, cookie }
+
+extension ParameterInOpenApiExt on ParameterInOpenApi {
+  bool get isQuery => this == ParameterInOpenApi.query;
+  String toJson() => _$ParameterInOpenApiEnumMap[this]!;
+  static ParameterInOpenApi? maybeFromJson(String? type) =>
+      $enumDecodeNullable(_$ParameterInOpenApiEnumMap, type);
+}
+
+@SpecsSerializable()
+class ParameterOpenApi with PrettyJsonToString implements RefOrOpenApi<ParameterOpenApi> {
+  final String? description;
+  final Object? example;
+
+  @JsonKey(toJson: $nullIfEmpty)
+  final Map<String, dynamic> examples;
+
+  final String name;
+  @JsonKey(name: 'in')
+  final ParameterInOpenApi in$;
+
+  final bool required;
+  @JsonKey(toJson: $nullIfFalse)
+  final bool deprecated;
+
+  final SchemaOrRefOpenApi? schema; // Property
+
+  // final Map<String, MediaOpenApi> content;
+
+  const ParameterOpenApi({
+    this.description,
+    this.example,
+    required this.name,
+    required this.in$,
+    this.required = false,
+    this.deprecated = false,
+    required this.schema,
+    this.examples = const {},
+  });
+
+  @override
+  R fold<R>(R Function(String ref) onRef, R Function(ParameterOpenApi p1) on) {
+    return on(this);
+  }
+
+  factory ParameterOpenApi.fromJson(Map<String, dynamic> map) => _$ParameterOpenApiFromJson(map);
+  @override
+  Map<String, dynamic> toJson() => _$ParameterOpenApiToJson(this);
+
+  @override
+  String? get ref => null;
+}
+
+@SpecsSerializable()
+class RequestBodyOpenApi with PrettyJsonToString {
+  final String? description;
+
+  final bool required;
+
+  final GroupMediaOpenApi content;
+
+  const RequestBodyOpenApi({
+    this.description,
+    this.required = false,
+    required this.content,
+  });
+
+  factory RequestBodyOpenApi.fromJson(Map<String, dynamic> map) =>
+      _$RequestBodyOpenApiFromJson(map);
+  @override
+  Map<String, dynamic> toJson() => _$RequestBodyOpenApiToJson(this);
+}
+
+@SpecsSerializable()
+class ResponseOpenApi with PrettyJsonToString {
+  final String description;
+
+  @JsonKey(toJson: $nullIfEmpty)
+  final Map<String, dynamic> headers;
+
+  final GroupMediaOpenApi? content;
+
+  const ResponseOpenApi({
+    required this.description,
+    this.headers = const {},
+    this.content,
+  });
+
+  factory ResponseOpenApi.fromJson(Map<String, dynamic> map) => _$ResponseOpenApiFromJson(map);
+  @override
+  Map<String, dynamic> toJson() => _$ResponseOpenApiToJson(this);
+}
+
+@SpecsSerializable()
+class ComponentsOpenApi with PrettyJsonToString {
+  @JsonKey(toJson: $nullIfEmpty)
+  final Map<String, SchemaOrRefOpenApi> schemas;
+  @JsonKey(toJson: $nullIfEmpty)
+  final Map<String, ResponseOpenApi> responses;
+  @JsonKey(toJson: $nullIfEmpty)
+  final Map<String, ParameterOpenApi> parameters;
+  @JsonKey(toJson: $nullIfEmpty)
+  final Map<String, dynamic> requestBodies;
+  @JsonKey(toJson: $nullIfEmpty)
+  final Map<String, RefOrOpenApi<SecuritySchemeOpenApi>> securitySchemes;
+
+  const ComponentsOpenApi({
+    this.schemas = const {},
+    this.responses = const {},
+    this.parameters = const {},
+    this.requestBodies = const {},
+    this.securitySchemes = const {},
+  });
+
+  factory ComponentsOpenApi.fromJson(Map<String, dynamic> map) => _$ComponentsOpenApiFromJson(map);
+  @override
+  Map<String, dynamic> toJson() => _$ComponentsOpenApiToJson(this);
+}
+
+extension ParameterInOpenApiExtensions on ParameterInOpenApi {
+  bool get path => this == ParameterInOpenApi.path;
+  bool get query => this == ParameterInOpenApi.query;
+  bool get header => this == ParameterInOpenApi.header;
+  bool get cookie => this == ParameterInOpenApi.cookie;
+}
