@@ -101,7 +101,7 @@ class RouteHandler {
     if (responseReturnType is! InterfaceType) return _emptyResponse;
 
     final responseType = responseReturnType.typeArguments.firstOrNull;
-    if (responseType == null || responseType.isVoid) return _emptyResponse;
+    if (responseType == null || responseType is VoidType) return _emptyResponse;
 
     return ResponseOpenApi(
       description: 'Operation completed!',

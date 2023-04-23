@@ -1,0 +1,38 @@
+name: example
+description: A sample command-line application.
+publish_to: 'none'
+
+environment:
+  sdk: '>=2.19.0 <3.0.0'
+
+scripts:
+  # To generate .g files:
+  build:runner: dart run build_runner watch --delete-conflicting-outputs
+
+dependencies:
+  shelf: ^1.4.0
+  shelf_router: ^1.1.3
+  shelf_static: ^1.1.1
+  shelf_swagger_ui: ^1.0.0+2
+
+  shelf_open_api:
+    path: ../shelf_open_api
+
+  mek_data_class: ^1.0.1
+  json_annotation: ^4.8.0
+
+dev_dependencies:
+  mek_lints: ^1.0.0
+
+  build_runner: ^2.3.3
+  mek_data_class_generator: ^1.1.1
+  json_serializable: ^6.6.1
+  shelf_router_generator: ^1.0.5
+  shelf_open_api_generator:
+    path: ../shelf_open_api_generator
+
+dependency_overrides:
+  shelf_open_api:
+    path: ../shelf_open_api
+  shelf_open_api_generator:
+    path: ../shelf_open_api_generator

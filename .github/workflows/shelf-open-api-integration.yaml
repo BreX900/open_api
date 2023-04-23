@@ -1,0 +1,33 @@
+name: shelf_open_api Integration
+
+on:
+  pull_request:
+    paths: [ shelf_open_api/** ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: shelf_open_api
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1.3
+
+      - name: Resolve dependencies
+        run: dart pub get
+        timeout-minutes: 2
+
+      - name: Check code formatting
+        run: >-
+          dart format --line-length 100 --set-exit-if-changed --output none
+          $(find . ! -path "./.dart_tool/**" -name "*.dart" ! -name "*.g.dart")
+
+      - name: Analyze code
+        run: dart analyze

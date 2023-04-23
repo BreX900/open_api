@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: Api
+  version: 0.0.0
+servers:
+  - url: "http://localhost:8080"
+paths:
+  /v1/messages:
+    get:
+      tags:
+        - MessagesController
+      summary: fetchMessages
+      operationId: fetchMessages
+      parameters:
+        - name: chatId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Operation completed!"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MessageDto"
+  /v1/chats:
+    post:
+      tags:
+        - ChatsController
+      summary: createChatForReport
+      operationId: createChatForReport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatCreateDto"
+      responses:
+        200:
+          description: "Operation completed!"
+components:
+  schemas:
+    MessageDto:
+      type: object
+      properties:
+        chatId:
+          type: string
+        content:
+          type: string
+      required:
+        - chatId
+        - content
+    ChatCreateDto:
+      type: object
+      properties:
+        title:
+          type: string
+      required:
+        - title
+tags:
+  - name: MessagesController
+  - name: ChatsController
