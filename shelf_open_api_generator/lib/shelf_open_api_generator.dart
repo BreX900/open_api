@@ -51,8 +51,9 @@ class OpenApiBuilder implements Builder {
       ]..sort((a, b) => (a.nameOffset).compareTo(b.nameOffset));
 
   Stream<LibraryElement> _findLibraryWithRoute(BuildStep buildStep) {
-    return buildStep.findAssets(Glob(config.includeRoutesIn)).concurrentAsyncMap((asset) async {
-      return await buildStep.resolver.libraryFor(asset, allowSyntaxErrors: true);
+    return buildStep.findAssets(Glob(config.includeRoutesIn)).concurrentAsyncExpand((asset) async* {
+      if (!await buildStep.resolver.isLibrary(asset)) return;
+      yield await buildStep.resolver.libraryFor(asset, allowSyntaxErrors: true);
     });
   }
 

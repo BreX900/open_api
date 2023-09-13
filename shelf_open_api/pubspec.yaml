@@ -2,10 +2,10 @@ name: shelf_open_api
 description: Open api specs generators from dart code for shelf package.
 repository: https://github.com/BreX900/open_api
 issue_tracker: https://github.com/BreX900/open_api/issues
-version: 1.0.0
+version: 1.1.0
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   meta: ^1.9.0
