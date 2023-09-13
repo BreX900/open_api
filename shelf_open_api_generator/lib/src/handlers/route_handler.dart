@@ -2,10 +2,9 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:collection/collection.dart';
+import 'package:open_api_spec/open_api_spec.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_open_api_generator/src/schemas_registry.dart';
-import 'package:shelf_open_api_generator/src/specs/base_specs.dart';
-import 'package:shelf_open_api_generator/src/specs/schema.dart';
 import 'package:shelf_open_api_generator/src/utils/doc.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:source_gen/source_gen.dart';
@@ -52,7 +51,7 @@ class RouteHandler {
         name: e.group(1)!,
         in$: ParameterInOpenApi.path,
         required: true,
-        schema: SchemaOrRefOpenApi(
+        schema: SchemaOpenApi(
           type: TypeOpenApi.string,
         ),
       );

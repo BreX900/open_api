@@ -1,4 +1,4 @@
-import 'package:shelf_open_api_generator/src/specs/specs_serialization.dart';
+import 'package:open_api_spec/src/utils/specs_serialization.dart';
 
 part 'info_specs.g.dart';
 
@@ -9,7 +9,6 @@ class InfoOpenApi {
   final String? description;
   final String? termsOfService;
   // final ContactOpenApi? contact;
-  // final LicenseOpenApi? license;
   final String version;
 
   const InfoOpenApi({
@@ -45,13 +44,29 @@ class ServerOpenApi {
 class TagOpenApi {
   final String name;
   final String? description;
-  // final ExternalDocsOpenApi? externalDocs;
+  final ExternalDocsOpenApi? externalDocs;
 
   const TagOpenApi({
     required this.name,
     this.description,
+    this.externalDocs,
   });
 
   factory TagOpenApi.fromJson(Map<String, dynamic> map) => _$TagOpenApiFromJson(map);
   Map<String, dynamic> toJson() => _$TagOpenApiToJson(this);
+}
+
+@SpecsSerializable()
+class ExternalDocsOpenApi {
+  final String? description;
+  final String url;
+
+  const ExternalDocsOpenApi({
+    this.description,
+    required this.url,
+  });
+
+  factory ExternalDocsOpenApi.fromJson(Map<String, dynamic> map) =>
+      _$ExternalDocsOpenApiFromJson(map);
+  Map<String, dynamic> toJson() => _$ExternalDocsOpenApiToJson(this);
 }

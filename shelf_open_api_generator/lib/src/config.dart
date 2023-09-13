@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:shelf_open_api_generator/src/specs/security_open_api.dart';
+import 'package:open_api_spec/open_api_spec.dart';
 
 part 'config.g.dart';
 
