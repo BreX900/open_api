@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
+import 'package:open_api_spec/open_api_spec.dart';
 import 'package:shelf_open_api_generator/src/config.dart';
 import 'package:shelf_open_api_generator/src/handlers/route_handler.dart';
 import 'package:shelf_open_api_generator/src/schemas_registry.dart';
-import 'package:shelf_open_api_generator/src/specs/base_specs.dart';
-import 'package:shelf_open_api_generator/src/specs/info_specs.dart';
 import 'package:shelf_open_api_generator/src/utils/doc.dart';
 import 'package:shelf_open_api_generator/src/utils/utils.dart';
 
@@ -41,7 +40,6 @@ class RoutesHandler {
         return MapEntry(path, item);
       }),
       components: ComponentsOpenApi(
-        schemas: schemasRegistry.schemas,
         securitySchemes: config.securitySchemes,
       ),
       tags: _buildTags(),

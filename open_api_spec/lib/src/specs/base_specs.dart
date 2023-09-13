@@ -1,11 +1,9 @@
-import 'package:build/build.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:shelf_open_api_generator/src/specs/info_specs.dart';
-import 'package:shelf_open_api_generator/src/specs/ref_or_specs.dart';
-import 'package:shelf_open_api_generator/src/specs/schema.dart';
-import 'package:shelf_open_api_generator/src/specs/security_open_api.dart';
-import 'package:shelf_open_api_generator/src/specs/specs_serialization.dart';
-import 'package:shelf_open_api_generator/src/specs/utils.dart';
+import 'package:open_api_spec/src/specs/info_specs.dart';
+import 'package:open_api_spec/src/specs/schema.dart';
+import 'package:open_api_spec/src/specs/security_open_api.dart';
+import 'package:open_api_spec/src/utils/specs_serialization.dart';
+import 'package:open_api_spec/src/utils/utils.dart';
 
 part 'base_specs.g.dart';
 
@@ -32,7 +30,7 @@ class OpenApi with PrettyJsonToString {
     required this.info,
     this.servers = const [],
     required this.paths,
-    required this.components,
+    this.components = const ComponentsOpenApi(),
     this.tags = const [],
   });
 
@@ -85,7 +83,7 @@ class ItemPathOpenApi with PrettyJsonToString {
       patch: usedOperations.remove('patch'),
     );
     if (usedOperations.isNotEmpty) {
-      log.warning('Not consumed all item path methods: ${usedOperations.keys}');
+      print('[WARNING] Not consumed all item path methods: ${usedOperations.keys}');
     }
     return instance;
   }
@@ -116,7 +114,7 @@ class OperationOpenApi with PrettyJsonToString {
   final String? operationId;
 
   @JsonKey(toJson: $nullIfEmpty)
-  final List<RefOrOpenApi<ParameterOpenApi>> parameters;
+  final List<ParameterOpenApi> parameters;
   final RequestBodyOpenApi? requestBody;
 
   /// Map<String | int, ResponseOpenApi>
@@ -129,7 +127,8 @@ class OperationOpenApi with PrettyJsonToString {
 
   @JsonKey(toJson: $nullIfEmpty)
   final Map<String, List<String>> security;
-  // final List<ServerOpenApi> servers;
+  @JsonKey(toJson: $nullIfEmpty)
+  final List<ServerOpenApi> servers;
 
   const OperationOpenApi({
     this.tags = const [],
@@ -141,13 +140,26 @@ class OperationOpenApi with PrettyJsonToString {
     required this.responses,
     this.deprecated = false,
     this.security = const {},
+    this.servers = const [],
   });
 
   bool get hasSummary => summary != null && summary!.trim().isNotEmpty;
   bool get hasDescription => description != null && description!.trim().isNotEmpty;
 
-  // ResponseOpenApi? get successResponse =>
-  //     responses.singleWhereOrNull((code, _) => code >= 200 && code < 300)?.value;
+  (int, ResponseOpenApi)? get successResponse {
+    for (final MapEntry(key: code, value: response) in responses.entries) {
+      if (code < 200 && code >= 300) continue;
+      return (code, response);
+    }
+    return null;
+  }
+
+  Map<int, ResponseOpenApi> get failedResponses {
+    return Map.fromEntries(responses.entries.where((e) {
+      final MapEntry(key: code) = e;
+      return code < 200 && code >= 300;
+    }));
+  }
 
   factory OperationOpenApi.fromJson(Map<String, dynamic> map) => _$OperationOpenApiFromJson(map);
   @override
@@ -167,7 +179,7 @@ extension ParameterInOpenApiExt on ParameterInOpenApi {
 }
 
 @SpecsSerializable()
-class ParameterOpenApi with PrettyJsonToString implements RefOrOpenApi<ParameterOpenApi> {
+class ParameterOpenApi with PrettyJsonToString {
   final String? description;
   final Object? example;
 
@@ -182,7 +194,10 @@ class ParameterOpenApi with PrettyJsonToString implements RefOrOpenApi<Parameter
   @JsonKey(toJson: $nullIfFalse)
   final bool deprecated;
 
-  final SchemaOrRefOpenApi? schema; // Property
+  final String? style;
+  final bool? explode;
+
+  final SchemaOpenApi? schema; // Property
 
   // final Map<String, MediaOpenApi> content;
 
@@ -193,21 +208,15 @@ class ParameterOpenApi with PrettyJsonToString implements RefOrOpenApi<Parameter
     required this.in$,
     this.required = false,
     this.deprecated = false,
+    this.style,
+    this.explode,
     required this.schema,
     this.examples = const {},
   });
 
-  @override
-  R fold<R>(R Function(String ref) onRef, R Function(ParameterOpenApi p1) on) {
-    return on(this);
-  }
-
   factory ParameterOpenApi.fromJson(Map<String, dynamic> map) => _$ParameterOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$ParameterOpenApiToJson(this);
-
-  @override
-  String? get ref => null;
 }
 
 @SpecsSerializable()
@@ -253,7 +262,7 @@ class ResponseOpenApi with PrettyJsonToString {
 @SpecsSerializable()
 class ComponentsOpenApi with PrettyJsonToString {
   @JsonKey(toJson: $nullIfEmpty)
-  final Map<String, SchemaOrRefOpenApi> schemas;
+  final Map<String, SchemaOpenApi> schemas;
   @JsonKey(toJson: $nullIfEmpty)
   final Map<String, ResponseOpenApi> responses;
   @JsonKey(toJson: $nullIfEmpty)
@@ -261,7 +270,7 @@ class ComponentsOpenApi with PrettyJsonToString {
   @JsonKey(toJson: $nullIfEmpty)
   final Map<String, dynamic> requestBodies;
   @JsonKey(toJson: $nullIfEmpty)
-  final Map<String, RefOrOpenApi<SecuritySchemeOpenApi>> securitySchemes;
+  final Map<String, SecuritySchemeOpenApi> securitySchemes;
 
   const ComponentsOpenApi({
     this.schemas = const {},

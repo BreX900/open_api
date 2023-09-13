@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
+import 'package:open_api_spec/open_api.dart';
 import 'package:shelf_open_api/shelf_open_api.dart';
 import 'package:shelf_open_api/shelf_routing.dart';
 import 'package:shelf_open_api_generator/src/config.dart';
@@ -106,11 +107,11 @@ class OpenApiBuilder implements Builder {
     );
 
     final openApi = await routesHandler.buildOpenApi();
-
+    final rawOpenApi = organizeOpenApi(openApi.toJson());
     final result = YamlEncoder(
       shouldMultilineStringInBlock: false,
       toEncodable: (o) => o.toJson(),
-    ).convert(openApi.toJson());
+    ).convert(rawOpenApi);
 
     await buildStep.writeAsString(buildStep.allowedOutputs.single, result);
   }

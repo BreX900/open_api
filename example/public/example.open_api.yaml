@@ -44,6 +44,7 @@ paths:
 components:
   schemas:
     MessageDto:
+      title: MessageDto
       type: object
       properties:
         chatId:
@@ -54,6 +55,7 @@ components:
         - chatId
         - content
     ChatCreateDto:
+      title: ChatCreateDto
       type: object
       properties:
         title:

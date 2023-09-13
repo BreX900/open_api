@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:shelf_open_api_generator/src/specs/ref_or_specs.dart';
-import 'package:shelf_open_api_generator/src/specs/specs_serialization.dart';
+import 'package:open_api_spec/src/utils/specs_serialization.dart';
+import 'package:open_api_spec/src/utils/utils.dart';
 
 part 'security_open_api.g.dart';
 
@@ -29,17 +29,26 @@ enum SecuritySchemeNameOpenApi {
   @JsonValue('SCRAM-SHA-256')
   scramSha256,
   @JsonValue('vapid')
-  vapid
+  vapid;
+
+  static final _$securitySchemeNameOpenApiEnumMap = {
+    ..._$SecuritySchemeNameOpenApiEnumMap,
+    ..._$SecuritySchemeNameOpenApiEnumMap.map((key, value) => MapEntry(key, value.toLowerCase())),
+  };
+
+  static SecuritySchemeNameOpenApi? fromJson(String value) =>
+      $enumDecodeNullable(_$securitySchemeNameOpenApiEnumMap, value);
 }
 
 /// Version: 3.0.3
 @SpecsSerializable()
-class SecuritySchemeOpenApi with RefOrOpenApi<SecuritySchemeOpenApi> {
+class SecuritySchemeOpenApi with PrettyJsonToString {
   final SecuritySchemeTypeOpenApi type;
   final String? description;
   final String? name;
   @JsonKey(name: 'in')
   final SecuritySchemeInOpenApi? in$;
+  @JsonKey(fromJson: SecuritySchemeNameOpenApi.fromJson)
   final SecuritySchemeNameOpenApi? scheme;
   final String? bearerFormat;
   final OAuthFlowsOpenApi? flows;
@@ -56,18 +65,10 @@ class SecuritySchemeOpenApi with RefOrOpenApi<SecuritySchemeOpenApi> {
     this.openIdConnectUrl,
   });
 
-  @override
-  R fold<R>(R Function(String ref) onRef, R Function(SecuritySchemeOpenApi p1) on) {
-    return on(this);
-  }
-
   factory SecuritySchemeOpenApi.fromJson(Map<String, dynamic> map) =>
       _$SecuritySchemeOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$SecuritySchemeOpenApiToJson(this);
-
-  @override
-  String? get ref => null;
 }
 
 /// Version: 3.0.3

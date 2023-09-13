@@ -7,7 +7,7 @@ environment:
 
 scripts:
   # To generate .g files:
-  build:runner: dart run build_runner watch --delete-conflicting-outputs
+  build:runner: dart run build_runner watch --delete-conflicting-outputs --verbose
 
 dependencies:
   shelf: ^1.4.0
@@ -32,6 +32,8 @@ dev_dependencies:
     path: ../shelf_open_api_generator
 
 dependency_overrides:
+  open_api_spec:
+    path: ../open_api_spec
   shelf_open_api:
     path: ../shelf_open_api
   shelf_open_api_generator:

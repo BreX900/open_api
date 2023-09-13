@@ -3,7 +3,7 @@ import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
-import 'package:shelf_open_api_generator/src/specs/schema.dart';
+import 'package:open_api_spec/open_api_spec.dart';
 import 'package:shelf_open_api_generator/src/utils/doc.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -11,12 +11,9 @@ class SchemasRegistry {
   static final _dateTimeType = TypeChecker.fromRuntime(DateTime);
   static final _uriType = TypeChecker.fromRuntime(Uri);
 
-  final Map<String, _Schema> _schemas = {};
+  final Map<String, Set<DartType>> _schemas = {};
 
-  Map<String, SchemaOrRefOpenApi> get schemas =>
-      _schemas.map((key, value) => MapEntry(key, value.value));
-
-  SchemaOrRefOpenApi tryRegister({
+  SchemaOpenApi tryRegister({
     bool isBidirectional = true,
     Doc doc = Doc.none,
     required DartType dartType,
@@ -30,41 +27,36 @@ class SchemasRegistry {
       final doc = Doc.from(element.documentationComment);
       final enumValues = element.fields.where((element) => element.isEnumConstant);
 
-      return _register(
-        isBidirectional: true,
-        refDescription: description,
-        refExample: example,
-        dartType: dartType,
-        name: element.name,
-        schema: SchemaOrRefOpenApi(
-          description: doc.summaryAndDescription,
-          example: doc.example,
-          type: TypeOpenApi.string,
-          enum$: enumValues.map((e) => e.name).toList(),
-        ),
+      _checkRegistration(dartType: dartType, name: element.name);
+      return SchemaOpenApi(
+        title: element.name,
+        description: doc.summaryAndDescription,
+        example: doc.example,
+        type: TypeOpenApi.string,
+        enum$: enumValues.map((e) => e.name).toList(),
       );
     }
 
     if (dartType.isDartCoreObject) {
-      return SchemaOrRefOpenApi(
+      return SchemaOpenApi(
         description: description ?? 'Support any json value type.',
         example: example,
       );
     } else if (dartType.isDartCoreBool) {
-      return SchemaOrRefOpenApi(
+      return SchemaOpenApi(
         description: description,
         example: example,
         type: TypeOpenApi.boolean,
       );
     } else if (dartType.isDartCoreNum || dartType.isDartCoreDouble) {
-      return SchemaOrRefOpenApi(
+      return SchemaOpenApi(
         description: description,
         example: example,
         type: TypeOpenApi.number,
         format: dartType.isDartCoreDouble ? FormatOpenApi.double : null,
       );
     } else if (dartType.isDartCoreInt) {
-      return SchemaOrRefOpenApi(
+      return SchemaOpenApi(
         description: description,
         example: example,
         type: TypeOpenApi.integer,
@@ -73,7 +65,7 @@ class SchemasRegistry {
     } else if (dartType.isDartCoreString ||
         _uriType.isAssignableFromType(dartType) ||
         _dateTimeType.isAssignableFromType(dartType)) {
-      return SchemaOrRefOpenApi(
+      return SchemaOpenApi(
         description: description,
         example: example,
         type: TypeOpenApi.string,
@@ -84,7 +76,7 @@ class SchemasRegistry {
     } else if (dartType.isDartCoreIterable || dartType.isDartCoreList) {
       final typeArgument = (dartType as ParameterizedType).typeArguments.single;
 
-      return SchemaOrRefOpenApi(
+      return SchemaOpenApi(
         description: description,
         example: example,
         type: TypeOpenApi.array,
@@ -101,7 +93,7 @@ class SchemasRegistry {
         throw StateError('Invalid map type. The key type must be a `String` type.');
       }
 
-      return SchemaOrRefOpenApi(
+      return SchemaOpenApi(
         description: description,
         example: example,
         type: TypeOpenApi.object,
@@ -133,65 +125,45 @@ class SchemasRegistry {
         }).toList();
       }
 
-      return _register(
-        isBidirectional: isBidirectional,
-        refDescription: description,
-        refExample: example,
-        dartType: dartType,
-        name: element.name,
-        schema: SchemaOrRefOpenApi(
-          type: TypeOpenApi.object,
-          format: null,
-          required: properties.where((e) => e.isRequired).map((e) => e.name).toList(),
-          properties: {
-            for (final property in properties)
-              property.name: tryRegister(
-                isBidirectional: isBidirectional,
-                doc: Doc.from(element.fields.firstWhereOrNull((e) {
-                  return e.name == property.name;
-                })?.documentationComment),
-                dartType: property.type,
-              ),
-          },
-        ),
+      _checkRegistration(dartType: dartType, name: element.name);
+
+      return SchemaOpenApi(
+        title: element.name,
+        type: TypeOpenApi.object,
+        format: null,
+        required: properties.where((e) => e.isRequired).map((e) => e.name).toList(),
+        properties: {
+          for (final property in properties)
+            property.name: tryRegister(
+              isBidirectional: isBidirectional,
+              doc: Doc.from(element.fields.firstWhereOrNull((e) {
+                return e.name == property.name;
+              })?.documentationComment),
+              dartType: property.type,
+            ),
+        },
       );
     }
 
     log.warning('I cant create $dartType component schema!');
-    return SchemaOrRefOpenApi(
+    return SchemaOpenApi(
       description: 'Unknown value type.',
     );
   }
 
-  SchemaOrRefOpenApi _register({
-    required bool isBidirectional,
-    required String? refDescription,
-    required String? refExample,
+  void _checkRegistration({
     required DartType dartType,
     required String name,
-    required SchemaOrRefOpenApi schema,
   }) {
-    final ref = SchemaOrRefOpenApi(
-      description: refDescription,
-      ref: '#/components/schemas/$name',
-    );
+    final prevDartTypes = _schemas[name];
 
-    final currentSchema = _schemas[name];
-    if (currentSchema != null) {
-      if (currentSchema.originalType != dartType) {
-        log.warning('Already exist $name component schema with different type!\n'
-            '${currentSchema.originalType} | $dartType');
-      }
-
-      if (currentSchema.isBidirectional) return ref;
+    if (prevDartTypes == null) {
+      _schemas[name] = {dartType};
+    } else if (!prevDartTypes.contains(dartType)) {
+      log.warning('Already exist $name component schema with different type!\n'
+          '$prevDartTypes | $dartType');
+      _schemas[name] = {...prevDartTypes, dartType};
     }
-
-    _schemas[name] = _Schema(
-      originalType: dartType,
-      isBidirectional: isBidirectional,
-      value: schema,
-    );
-    return ref;
   }
 }
 
@@ -204,17 +176,5 @@ class _ClassProperty {
     required this.isRequired,
     required this.type,
     required this.name,
-  });
-}
-
-class _Schema {
-  final DartType originalType;
-  final bool isBidirectional;
-  final SchemaOrRefOpenApi value;
-
-  const _Schema({
-    required this.originalType,
-    required this.isBidirectional,
-    required this.value,
   });
 }
