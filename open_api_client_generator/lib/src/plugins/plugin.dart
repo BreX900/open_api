@@ -8,7 +8,7 @@ mixin class Plugin {
 
   FutureOr<void> onStart() {}
 
-  OpenApi onSpecification(Map<String, dynamic> specifications, OpenApi openApi) => openApi;
+  OpenApi onSpecification(Map<dynamic, dynamic> specifications, OpenApi openApi) => openApi;
 
   Class onApiClass(OpenApi openApi, Class spec) => spec;
 

@@ -1,4 +1,5 @@
 import 'package:open_api_client_generator/src/client_codecs/abstract_client_codec.dart';
+import 'package:open_api_client_generator/src/utils/files_contents.dart';
 
 class DartClientCodec extends AbstractClientCodec {
   const DartClientCodec({
@@ -6,10 +7,10 @@ class DartClientCodec extends AbstractClientCodec {
   });
 
   @override
-  List<String> get filesPaths => [
-        ...super.filesPaths,
-        '${root.path}/dart_api_client.dart',
-        '${root.path}/io_api_client.dart',
-        '${root.path}/web_api_client.dart',
-      ];
+  Map<String, String> get filesContents => {
+        ...super.filesContents,
+        'dart_api_client.dart': FilesContents.dartApiClient,
+        'io_api_client.dart': FilesContents.ioApiClient,
+        'web_api_client.dart': FilesContents.webApiClient,
+      };
 }

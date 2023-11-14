@@ -23,7 +23,12 @@ enum FieldRename {
 
   /// Encodes a field named `screamingSnakeCase` with a JSON key
   /// `SCREAMING_SNAKE_CASE`
-  screamingSnake,
+  screamingSnake;
+
+  static FieldRename? fromName(String? name) {
+    if (name == null) return null;
+    return FieldRename.values.firstWhere((e) => e.name == name);
+  }
 }
 
 class JsonSerializableDataCodec extends DataCodec with Plugin {

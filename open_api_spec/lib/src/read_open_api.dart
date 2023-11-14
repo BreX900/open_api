@@ -7,56 +7,47 @@ import 'package:yaml/yaml.dart';
 
 path_.Context get _uri => path_.url;
 
-Future<Map<String, dynamic>> readOpenApi(Uri uri) async {
+Future<Map<dynamic, dynamic>> readOpenApi(Uri uri) async {
   if (uri.isScheme('HTTP') || uri.isScheme('HTTPS')) {
     final response = await get(uri);
-    final rawOpenApi = response.body;
-    return jsonDecode(rawOpenApi);
+    final content = response.body;
+    return _parseContent(uri.path, content);
   } else {
     final path = _uri.fromUri(uri);
-    final extension = _uri.extension(path);
-
-    if (const {'.yaml', '.yml'}.contains(extension)) {
-      final rawOpenApi = File(path).readAsStringSync();
-      return loadYaml(rawOpenApi);
-    } else if (extension == '.json') {
-      final rawOpenApi = File(path).readAsStringSync();
-      return jsonDecode(rawOpenApi);
-    } else {
-      throw StateError('Not support file $extension');
-    }
+    final content = File(path).readAsStringSync();
+    return _parseContent(path, content);
   }
 }
 
-const _sentinelCache = <String, Map<String, dynamic>>{};
+const _sentinelCache = <String, Map<dynamic, dynamic>>{};
 
-Future<Map<String, dynamic>> readOpenApiWithRefs(
+Future<Map<dynamic, dynamic>> readOpenApiWithRefs(
   Uri input, {
-  Map<String, Map<String, dynamic>>? cache = _sentinelCache,
+  Map<String, Map<dynamic, dynamic>>? cache = _sentinelCache,
 }) async {
-  cache = cache == _sentinelCache ? <String, Map<String, dynamic>>{} : cache;
+  cache = cache == _sentinelCache ? <String, Map<dynamic, dynamic>>{} : cache;
 
   final data = await readOpenApi(input);
 
   final document = await _resolveDocumentRefs(input, data, data, cache: cache);
-  return (document as Map<String, dynamic>)..remove('parameters');
+  return {...document as Map<dynamic, dynamic>}..remove('parameters');
 }
 
 Future<Object?> _resolveDocumentRefs(
   Uri input,
-  Map<String, dynamic> document,
+  Map<dynamic, dynamic> document,
   Object? data, {
-  required Map<String, Map<String, dynamic>>? cache,
+  required Map<String, Map<dynamic, dynamic>>? cache,
 }) async {
   if (data is List<dynamic>) {
     return await Future.wait<dynamic>(data.map((element) async {
       return await _resolveDocumentRefs(input, document, element, cache: cache);
     }));
-  } else if (data is Map<String, dynamic>) {
+  } else if (data is Map<dynamic, dynamic>) {
     final ref = data['\$ref'] as String?;
     if (ref != null) return await readRef(input, document, ref, cache: cache);
 
-    return Map<String, dynamic>.fromEntries(await Future.wait(data.entries.map((_) async {
+    return Map<dynamic, dynamic>.fromEntries(await Future.wait(data.entries.map((_) async {
       final MapEntry(:key, :value) = _;
       return MapEntry(key, await _resolveDocumentRefs(input, document, value, cache: cache));
     })));
@@ -65,13 +56,13 @@ Future<Object?> _resolveDocumentRefs(
   }
 }
 
-Future<Map<String, dynamic>> readRef(
+Future<Map<dynamic, dynamic>> readRef(
   Uri uri,
-  Map<String, dynamic> document,
+  Map<dynamic, dynamic> document,
   String ref, {
-  Map<String, Map<String, dynamic>>? cache,
+  Map<String, Map<dynamic, dynamic>>? cache,
 }) async {
-  Map<String, dynamic>? pendingData;
+  Map<dynamic, dynamic>? pendingData;
   if (cache != null) {
     pendingData = cache[ref];
     if (pendingData != null) return pendingData;
@@ -92,7 +83,7 @@ Future<Map<String, dynamic>> readRef(
   if (documentRef != null) {
     final segments = documentRef.split('/');
     for (final segment in segments) {
-      data = data[segment] as Map<String, dynamic>;
+      data = data[segment] as Map<dynamic, dynamic>;
     }
     if (!data.containsKey('title')) data = {'title': segments.last, ...data};
   }
@@ -100,9 +91,20 @@ Future<Map<String, dynamic>> readRef(
   final resolvedData = await _resolveDocumentRefs(uri, document, data, cache: cache);
 
   if (pendingData != null) {
-    pendingData.addAll(resolvedData as Map<String, dynamic>);
+    pendingData.addAll(resolvedData as Map<dynamic, dynamic>);
     return pendingData;
   } else {
-    return resolvedData as Map<String, dynamic>;
+    return resolvedData as Map<dynamic, dynamic>;
+  }
+}
+
+Map<dynamic, dynamic> _parseContent(String path, String content) {
+  final extension = _uri.extension(path);
+  if (const {'.yaml', '.yml'}.contains(extension)) {
+    return loadYaml(content);
+  } else if (extension == '.json') {
+    return jsonDecode(content);
+  } else {
+    throw StateError('Not support file $extension');
   }
 }

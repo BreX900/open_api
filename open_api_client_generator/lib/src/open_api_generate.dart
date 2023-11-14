@@ -15,6 +15,7 @@ import 'package:open_api_client_generator/src/plugins/plugin.dart';
 import 'package:open_api_client_generator/src/utils/extensions.dart';
 import 'package:open_api_spec/open_api.dart';
 import 'package:open_api_spec/open_api_spec.dart';
+import 'package:path/path.dart' as path_;
 
 Future<void> generateApi({
   required Options options,
@@ -98,7 +99,9 @@ Future<void> generateApi({
     ..ignoreForFile.addAll([
       'unnecessary_brace_in_string_interps',
       'no_leading_underscores_for_local_identifiers',
+      'always_use_package_imports',
     ])
+    ..directives.add(Directive.part('${path_.basenameWithoutExtension(apiFileName)}.g.dart'))
     ..body.add(apiSpec)
     ..body.addAll(dataSpecs));
   librarySpec = allPlugins.fold(librarySpec, (spec, plugin) => plugin.onLibrary(openApi, spec));

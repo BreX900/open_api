@@ -34,7 +34,7 @@ class GroupMediaOpenApi with PrettyJsonToString {
 
   MediaOpenApi? get single => json ?? any ?? urlEncoded;
 
-  factory GroupMediaOpenApi.fromJson(Map<String, dynamic> map) => _$GroupMediaOpenApiFromJson(map);
+  factory GroupMediaOpenApi.fromJson(Map<dynamic, dynamic> map) => _$GroupMediaOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$GroupMediaOpenApiToJson(this);
 }
@@ -53,7 +53,7 @@ class MediaOpenApi with PrettyJsonToString {
     required this.schema,
   });
 
-  factory MediaOpenApi.fromJson(Map<String, dynamic> map) => _$MediaOpenApiFromJson(map);
+  factory MediaOpenApi.fromJson(Map<dynamic, dynamic> map) => _$MediaOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$MediaOpenApiToJson(this);
 }
@@ -92,10 +92,8 @@ enum FormatOpenApi {
 
   /// File upload
   binary,
-  base64,
-}
+  base64;
 
-extension FormatOpenApiExt on FormatOpenApi {
   String toJson() => _$FormatOpenApiEnumMap[this]!;
   static FormatOpenApi? maybeFromJson(String? type) =>
       $enumDecodeNullable(_$FormatOpenApiEnumMap, type);
@@ -178,7 +176,7 @@ class SchemaOpenApi implements RefOr<SchemaOpenApi> {
     this.uniqueItems,
   });
 
-  factory SchemaOpenApi.fromJson(Map<String, dynamic> map) => _SchemaOpenApi(map);
+  factory SchemaOpenApi.fromJson(Map<dynamic, dynamic> map) => _SchemaOpenApi(map);
   @override
   Map<String, dynamic> toJson() => _$SchemaOpenApiToJson(this);
 
@@ -187,7 +185,7 @@ class SchemaOpenApi implements RefOr<SchemaOpenApi> {
 }
 
 class _SchemaOpenApi extends RefOr<SchemaOpenApi> with PrettyJsonToString implements SchemaOpenApi {
-  final Map<String, dynamic> _json;
+  final Map<dynamic, dynamic> _json;
   SchemaOpenApi? _delegate$;
   SchemaOpenApi get _delegate => (_delegate$ ??= _$SchemaOpenApiFromJson(_json));
 

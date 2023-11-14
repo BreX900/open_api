@@ -6,7 +6,7 @@ part of 'info_specs.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-InfoOpenApi _$InfoOpenApiFromJson(Map<String, dynamic> json) => $checkedCreate(
+InfoOpenApi _$InfoOpenApiFromJson(Map json) => $checkedCreate(
       'InfoOpenApi',
       json,
       ($checkedConvert) {
@@ -38,8 +38,7 @@ Map<String, dynamic> _$InfoOpenApiToJson(InfoOpenApi instance) {
   return val;
 }
 
-ServerOpenApi _$ServerOpenApiFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+ServerOpenApi _$ServerOpenApiFromJson(Map json) => $checkedCreate(
       'ServerOpenApi',
       json,
       ($checkedConvert) {
@@ -66,18 +65,15 @@ Map<String, dynamic> _$ServerOpenApiToJson(ServerOpenApi instance) {
   return val;
 }
 
-TagOpenApi _$TagOpenApiFromJson(Map<String, dynamic> json) => $checkedCreate(
+TagOpenApi _$TagOpenApiFromJson(Map json) => $checkedCreate(
       'TagOpenApi',
       json,
       ($checkedConvert) {
         final val = TagOpenApi(
           name: $checkedConvert('name', (v) => v as String),
           description: $checkedConvert('description', (v) => v as String?),
-          externalDocs: $checkedConvert(
-              'externalDocs',
-              (v) => v == null
-                  ? null
-                  : ExternalDocsOpenApi.fromJson(v as Map<String, dynamic>)),
+          externalDocs: $checkedConvert('externalDocs',
+              (v) => v == null ? null : ExternalDocsOpenApi.fromJson(v as Map)),
         );
         return val;
       },
@@ -99,8 +95,7 @@ Map<String, dynamic> _$TagOpenApiToJson(TagOpenApi instance) {
   return val;
 }
 
-ExternalDocsOpenApi _$ExternalDocsOpenApiFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+ExternalDocsOpenApi _$ExternalDocsOpenApiFromJson(Map json) => $checkedCreate(
       'ExternalDocsOpenApi',
       json,
       ($checkedConvert) {

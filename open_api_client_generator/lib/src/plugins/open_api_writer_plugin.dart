@@ -18,10 +18,10 @@ class WriteOpenApiPlugin with Plugin {
   });
 
   late String? _fileName;
-  late Map<String, dynamic> _specifications;
+  late Map<dynamic, dynamic> _specifications;
 
   @override
-  OpenApi onSpecification(Map<String, dynamic> specifications, OpenApi openApi) {
+  OpenApi onSpecification(Map<dynamic, dynamic> specifications, OpenApi openApi) {
     _fileName = openApi.info.title.snakeCase;
     _specifications = specifications;
 

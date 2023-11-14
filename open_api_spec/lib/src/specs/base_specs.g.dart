@@ -6,39 +6,36 @@ part of 'base_specs.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OpenApi _$OpenApiFromJson(Map<String, dynamic> json) => $checkedCreate(
+OpenApi _$OpenApiFromJson(Map json) => $checkedCreate(
       'OpenApi',
       json,
       ($checkedConvert) {
         final val = OpenApi(
           openapi: $checkedConvert('openapi', (v) => v as String),
-          info: $checkedConvert(
-              'info', (v) => InfoOpenApi.fromJson(v as Map<String, dynamic>)),
+          info: $checkedConvert('info', (v) => InfoOpenApi.fromJson(v as Map)),
           servers: $checkedConvert(
               'servers',
               (v) =>
                   (v as List<dynamic>?)
-                      ?.map((e) =>
-                          ServerOpenApi.fromJson(e as Map<String, dynamic>))
+                      ?.map((e) => ServerOpenApi.fromJson(e as Map))
                       .toList() ??
                   const []),
           paths: $checkedConvert(
               'paths',
-              (v) => (v as Map<String, dynamic>).map(
+              (v) => (v as Map).map(
                     (k, e) => MapEntry(
-                        k, ItemPathOpenApi.fromJson(e as Map<String, dynamic>)),
+                        k as String, ItemPathOpenApi.fromJson(e as Map)),
                   )),
           components: $checkedConvert(
               'components',
               (v) => v == null
                   ? const ComponentsOpenApi()
-                  : ComponentsOpenApi.fromJson(v as Map<String, dynamic>)),
+                  : ComponentsOpenApi.fromJson(v as Map)),
           tags: $checkedConvert(
               'tags',
               (v) =>
                   (v as List<dynamic>?)
-                      ?.map(
-                          (e) => TagOpenApi.fromJson(e as Map<String, dynamic>))
+                      ?.map((e) => TagOpenApi.fromJson(e as Map))
                       .toList() ??
                   const []),
         );
@@ -65,44 +62,25 @@ Map<String, dynamic> _$OpenApiToJson(OpenApi instance) {
   return val;
 }
 
-ItemPathOpenApi _$ItemPathOpenApiFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+ItemPathOpenApi _$ItemPathOpenApiFromJson(Map json) => $checkedCreate(
       'ItemPathOpenApi',
       json,
       ($checkedConvert) {
         final val = ItemPathOpenApi(
           summary: $checkedConvert('summary', (v) => v as String?),
           description: $checkedConvert('description', (v) => v as String?),
-          get: $checkedConvert(
-              'get',
-              (v) => v == null
-                  ? null
-                  : OperationOpenApi.fromJson(v as Map<String, dynamic>)),
-          put: $checkedConvert(
-              'put',
-              (v) => v == null
-                  ? null
-                  : OperationOpenApi.fromJson(v as Map<String, dynamic>)),
-          post: $checkedConvert(
-              'post',
-              (v) => v == null
-                  ? null
-                  : OperationOpenApi.fromJson(v as Map<String, dynamic>)),
-          delete: $checkedConvert(
-              'delete',
-              (v) => v == null
-                  ? null
-                  : OperationOpenApi.fromJson(v as Map<String, dynamic>)),
-          head: $checkedConvert(
-              'head',
-              (v) => v == null
-                  ? null
-                  : OperationOpenApi.fromJson(v as Map<String, dynamic>)),
-          patch: $checkedConvert(
-              'patch',
-              (v) => v == null
-                  ? null
-                  : OperationOpenApi.fromJson(v as Map<String, dynamic>)),
+          get: $checkedConvert('get',
+              (v) => v == null ? null : OperationOpenApi.fromJson(v as Map)),
+          put: $checkedConvert('put',
+              (v) => v == null ? null : OperationOpenApi.fromJson(v as Map)),
+          post: $checkedConvert('post',
+              (v) => v == null ? null : OperationOpenApi.fromJson(v as Map)),
+          delete: $checkedConvert('delete',
+              (v) => v == null ? null : OperationOpenApi.fromJson(v as Map)),
+          head: $checkedConvert('head',
+              (v) => v == null ? null : OperationOpenApi.fromJson(v as Map)),
+          patch: $checkedConvert('patch',
+              (v) => v == null ? null : OperationOpenApi.fromJson(v as Map)),
         );
         return val;
       },
@@ -128,8 +106,7 @@ Map<String, dynamic> _$ItemPathOpenApiToJson(ItemPathOpenApi instance) {
   return val;
 }
 
-OperationOpenApi _$OperationOpenApiFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+OperationOpenApi _$OperationOpenApiFromJson(Map json) => $checkedCreate(
       'OperationOpenApi',
       json,
       ($checkedConvert) {
@@ -146,27 +123,19 @@ OperationOpenApi _$OperationOpenApiFromJson(Map<String, dynamic> json) =>
               'parameters',
               (v) =>
                   (v as List<dynamic>?)
-                      ?.map((e) =>
-                          ParameterOpenApi.fromJson(e as Map<String, dynamic>))
+                      ?.map((e) => ParameterOpenApi.fromJson(e as Map))
                       .toList() ??
                   const []),
-          requestBody: $checkedConvert(
-              'requestBody',
-              (v) => v == null
-                  ? null
-                  : RequestBodyOpenApi.fromJson(v as Map<String, dynamic>)),
-          responses: $checkedConvert(
-              'responses',
-              (v) => (v as Map<String, dynamic>).map(
-                    (k, e) => MapEntry(int.parse(k),
-                        ResponseOpenApi.fromJson(e as Map<String, dynamic>)),
-                  )),
+          requestBody: $checkedConvert('requestBody',
+              (v) => v == null ? null : RequestBodyOpenApi.fromJson(v as Map)),
+          responses: $checkedConvert('responses',
+              (v) => OperationOpenApi._responsesFromJson(v as Map)),
           deprecated: $checkedConvert('deprecated', (v) => v as bool? ?? false),
           security: $checkedConvert(
               'security',
               (v) =>
-                  (v as Map<String, dynamic>?)?.map(
-                    (k, e) => MapEntry(k,
+                  (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String,
                         (e as List<dynamic>).map((e) => e as String).toList()),
                   ) ??
                   const {}),
@@ -174,8 +143,7 @@ OperationOpenApi _$OperationOpenApiFromJson(Map<String, dynamic> json) =>
               'servers',
               (v) =>
                   (v as List<dynamic>?)
-                      ?.map((e) =>
-                          ServerOpenApi.fromJson(e as Map<String, dynamic>))
+                      ?.map((e) => ServerOpenApi.fromJson(e as Map))
                       .toList() ??
                   const []),
         );
@@ -206,8 +174,7 @@ Map<String, dynamic> _$OperationOpenApiToJson(OperationOpenApi instance) {
   return val;
 }
 
-ParameterOpenApi _$ParameterOpenApiFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+ParameterOpenApi _$ParameterOpenApiFromJson(Map json) => $checkedCreate(
       'ParameterOpenApi',
       json,
       ($checkedConvert) {
@@ -221,13 +188,15 @@ ParameterOpenApi _$ParameterOpenApiFromJson(Map<String, dynamic> json) =>
           deprecated: $checkedConvert('deprecated', (v) => v as bool? ?? false),
           style: $checkedConvert('style', (v) => v as String?),
           explode: $checkedConvert('explode', (v) => v as bool?),
-          schema: $checkedConvert(
-              'schema',
-              (v) => v == null
-                  ? null
-                  : SchemaOpenApi.fromJson(v as Map<String, dynamic>)),
+          schema: $checkedConvert('schema',
+              (v) => v == null ? null : SchemaOpenApi.fromJson(v as Map)),
           examples: $checkedConvert(
-              'examples', (v) => v as Map<String, dynamic>? ?? const {}),
+              'examples',
+              (v) =>
+                  (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  ) ??
+                  const {}),
         );
         return val;
       },
@@ -263,16 +232,15 @@ const _$ParameterInOpenApiEnumMap = {
   ParameterInOpenApi.cookie: 'cookie',
 };
 
-RequestBodyOpenApi _$RequestBodyOpenApiFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+RequestBodyOpenApi _$RequestBodyOpenApiFromJson(Map json) => $checkedCreate(
       'RequestBodyOpenApi',
       json,
       ($checkedConvert) {
         final val = RequestBodyOpenApi(
           description: $checkedConvert('description', (v) => v as String?),
           required: $checkedConvert('required', (v) => v as bool? ?? false),
-          content: $checkedConvert('content',
-              (v) => GroupMediaOpenApi.fromJson(v as Map<String, dynamic>)),
+          content: $checkedConvert(
+              'content', (v) => GroupMediaOpenApi.fromJson(v as Map)),
         );
         return val;
       },
@@ -293,20 +261,21 @@ Map<String, dynamic> _$RequestBodyOpenApiToJson(RequestBodyOpenApi instance) {
   return val;
 }
 
-ResponseOpenApi _$ResponseOpenApiFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+ResponseOpenApi _$ResponseOpenApiFromJson(Map json) => $checkedCreate(
       'ResponseOpenApi',
       json,
       ($checkedConvert) {
         final val = ResponseOpenApi(
           description: $checkedConvert('description', (v) => v as String),
           headers: $checkedConvert(
-              'headers', (v) => v as Map<String, dynamic>? ?? const {}),
-          content: $checkedConvert(
-              'content',
-              (v) => v == null
-                  ? null
-                  : GroupMediaOpenApi.fromJson(v as Map<String, dynamic>)),
+              'headers',
+              (v) =>
+                  (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  ) ??
+                  const {}),
+          content: $checkedConvert('content',
+              (v) => v == null ? null : GroupMediaOpenApi.fromJson(v as Map)),
         );
         return val;
       },
@@ -328,8 +297,7 @@ Map<String, dynamic> _$ResponseOpenApiToJson(ResponseOpenApi instance) {
   return val;
 }
 
-ComponentsOpenApi _$ComponentsOpenApiFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+ComponentsOpenApi _$ComponentsOpenApiFromJson(Map json) => $checkedCreate(
       'ComponentsOpenApi',
       json,
       ($checkedConvert) {
@@ -337,37 +305,40 @@ ComponentsOpenApi _$ComponentsOpenApiFromJson(Map<String, dynamic> json) =>
           schemas: $checkedConvert(
               'schemas',
               (v) =>
-                  (v as Map<String, dynamic>?)?.map(
-                    (k, e) => MapEntry(
-                        k, SchemaOpenApi.fromJson(e as Map<String, dynamic>)),
+                  (v as Map?)?.map(
+                    (k, e) =>
+                        MapEntry(k as String, SchemaOpenApi.fromJson(e as Map)),
                   ) ??
                   const {}),
           responses: $checkedConvert(
               'responses',
               (v) =>
-                  (v as Map<String, dynamic>?)?.map(
+                  (v as Map?)?.map(
                     (k, e) => MapEntry(
-                        k, ResponseOpenApi.fromJson(e as Map<String, dynamic>)),
+                        k as String, ResponseOpenApi.fromJson(e as Map)),
                   ) ??
                   const {}),
           parameters: $checkedConvert(
               'parameters',
               (v) =>
-                  (v as Map<String, dynamic>?)?.map(
-                    (k, e) => MapEntry(k,
-                        ParameterOpenApi.fromJson(e as Map<String, dynamic>)),
+                  (v as Map?)?.map(
+                    (k, e) => MapEntry(
+                        k as String, ParameterOpenApi.fromJson(e as Map)),
                   ) ??
                   const {}),
           requestBodies: $checkedConvert(
-              'requestBodies', (v) => v as Map<String, dynamic>? ?? const {}),
+              'requestBodies',
+              (v) =>
+                  (v as Map?)?.map(
+                    (k, e) => MapEntry(k as String, e),
+                  ) ??
+                  const {}),
           securitySchemes: $checkedConvert(
               'securitySchemes',
               (v) =>
-                  (v as Map<String, dynamic>?)?.map(
+                  (v as Map?)?.map(
                     (k, e) => MapEntry(
-                        k,
-                        SecuritySchemeOpenApi.fromJson(
-                            e as Map<String, dynamic>)),
+                        k as String, SecuritySchemeOpenApi.fromJson(e as Map)),
                   ) ??
                   const {}),
         );

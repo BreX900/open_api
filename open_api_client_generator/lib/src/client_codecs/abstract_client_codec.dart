@@ -2,12 +2,10 @@ import 'dart:io';
 
 import 'package:code_builder/code_builder.dart';
 import 'package:open_api_client_generator/open_api_client_generator.dart';
-import 'package:path/path.dart' as path_;
+import 'package:open_api_client_generator/src/utils/files_contents.dart';
 
 class AbstractClientCodec extends ClientCodec with Plugin {
   final Options options;
-
-  Directory get root => Directory('./tools/clients');
 
   const AbstractClientCodec({
     required this.options,
@@ -16,8 +14,7 @@ class AbstractClientCodec extends ClientCodec with Plugin {
   @override
   Reference get type => Reference('ApiClient', './api_client.dart');
 
-  @override
-  List<String> get filesPaths => [...super.filesPaths, '${root.path}/api_client.dart'];
+  Map<String, String> get filesContents => {'api_client.dart': FilesContents.apiClient};
 
   @override
   String encodeSendMethod(
@@ -38,8 +35,8 @@ class AbstractClientCodec extends ClientCodec with Plugin {
 
   @override
   Future<void> onFinish() async {
-    await Future.wait(filesPaths.map((e) async {
-      await File(e).copy('${options.outputFolder}/${path_.basename(e)}');
+    await Future.wait(filesContents.entries.map((e) async {
+      await File('${options.outputFolder}/${e.key}').writeAsString(e.value);
     }));
   }
 }

@@ -8,6 +8,7 @@ class SpecsSerializable extends JsonSerializable {
   const SpecsSerializable({
     super.createPerFieldToJson,
   }) : super(
+          anyMap: true,
           createFactory: true,
           createToJson: true,
           includeIfNull: false,

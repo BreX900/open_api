@@ -15,10 +15,9 @@ class DioClientCodec extends ClientCodec {
     String? dataVar,
   }) {
     final b = StringBuffer();
-    b.write('await client.request(\'path\'');
+    b.write('await client.${method.toLowerCase()}(\'$path\'');
     if (dataVar != null) b.write(', data: $dataVar');
     if (queryParametersVar != null) b.write(', queryParameters: $queryParametersVar');
-    b.write(', options: Options(method: \'$method\')');
     b.write(');');
     return b.toString();
   }

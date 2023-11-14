@@ -4,14 +4,14 @@ class Options {
   final Uri input;
 
   final String apiClassName;
-  final String dataClassesPostfix;
+  final String? dataClassesPostfix;
 
   final String outputFolder;
 
   const Options({
     required this.input,
     this.apiClassName = 'Api',
-    this.dataClassesPostfix = '',
+    this.dataClassesPostfix,
     required this.outputFolder,
   }) : assert(apiClassName != '');
 

@@ -34,7 +34,7 @@ class OpenApi with PrettyJsonToString {
     this.tags = const [],
   });
 
-  factory OpenApi.fromJson(Map<String, dynamic> map) => _$OpenApiFromJson(map);
+  factory OpenApi.fromJson(Map<dynamic, dynamic> map) => _$OpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$OpenApiToJson(this);
 }
@@ -97,7 +97,7 @@ class ItemPathOpenApi with PrettyJsonToString {
         if (patch != null) 'patch': patch!,
       };
 
-  factory ItemPathOpenApi.fromJson(Map<String, dynamic> map) => _$ItemPathOpenApiFromJson(map);
+  factory ItemPathOpenApi.fromJson(Map<dynamic, dynamic> map) => _$ItemPathOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$ItemPathOpenApiToJson(this);
 }
@@ -118,6 +118,7 @@ class OperationOpenApi with PrettyJsonToString {
   final RequestBodyOpenApi? requestBody;
 
   /// Map<String | int, ResponseOpenApi>
+  @JsonKey(fromJson: _responsesFromJson)
   final Map<int, ResponseOpenApi> responses;
 
   // final Map<String, RefOpenApi<CallbackOpenApi>> callbacks;
@@ -161,9 +162,18 @@ class OperationOpenApi with PrettyJsonToString {
     }));
   }
 
-  factory OperationOpenApi.fromJson(Map<String, dynamic> map) => _$OperationOpenApiFromJson(map);
+  factory OperationOpenApi.fromJson(Map<dynamic, dynamic> map) => _$OperationOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$OperationOpenApiToJson(this);
+
+  static Map<int, ResponseOpenApi> _responsesFromJson(Map<dynamic, dynamic> json) {
+    return json.map((key, value) {
+      return MapEntry(
+        key is int ? key : int.parse(key as String),
+        ResponseOpenApi.fromJson(value as Map),
+      );
+    });
+  }
 }
 
 // ====================  PARAMETERS
@@ -214,7 +224,7 @@ class ParameterOpenApi with PrettyJsonToString {
     this.examples = const {},
   });
 
-  factory ParameterOpenApi.fromJson(Map<String, dynamic> map) => _$ParameterOpenApiFromJson(map);
+  factory ParameterOpenApi.fromJson(Map<dynamic, dynamic> map) => _$ParameterOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$ParameterOpenApiToJson(this);
 }
@@ -233,7 +243,7 @@ class RequestBodyOpenApi with PrettyJsonToString {
     required this.content,
   });
 
-  factory RequestBodyOpenApi.fromJson(Map<String, dynamic> map) =>
+  factory RequestBodyOpenApi.fromJson(Map<dynamic, dynamic> map) =>
       _$RequestBodyOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$RequestBodyOpenApiToJson(this);
@@ -254,7 +264,7 @@ class ResponseOpenApi with PrettyJsonToString {
     this.content,
   });
 
-  factory ResponseOpenApi.fromJson(Map<String, dynamic> map) => _$ResponseOpenApiFromJson(map);
+  factory ResponseOpenApi.fromJson(Map<dynamic, dynamic> map) => _$ResponseOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$ResponseOpenApiToJson(this);
 }
@@ -280,7 +290,7 @@ class ComponentsOpenApi with PrettyJsonToString {
     this.securitySchemes = const {},
   });
 
-  factory ComponentsOpenApi.fromJson(Map<String, dynamic> map) => _$ComponentsOpenApiFromJson(map);
+  factory ComponentsOpenApi.fromJson(Map<dynamic, dynamic> map) => _$ComponentsOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$ComponentsOpenApiToJson(this);
 }

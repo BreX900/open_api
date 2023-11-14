@@ -18,7 +18,7 @@ class InfoOpenApi {
     required this.version,
   });
 
-  factory InfoOpenApi.fromJson(Map<String, dynamic> map) => _$InfoOpenApiFromJson(map);
+  factory InfoOpenApi.fromJson(Map<dynamic, dynamic> map) => _$InfoOpenApiFromJson(map);
   Map<String, dynamic> toJson() => _$InfoOpenApiToJson(this);
 }
 
@@ -35,7 +35,7 @@ class ServerOpenApi {
     // this.variables,
   });
 
-  factory ServerOpenApi.fromJson(Map<String, dynamic> map) => _$ServerOpenApiFromJson(map);
+  factory ServerOpenApi.fromJson(Map<dynamic, dynamic> map) => _$ServerOpenApiFromJson(map);
   Map<String, dynamic> toJson() => _$ServerOpenApiToJson(this);
 }
 
@@ -52,7 +52,7 @@ class TagOpenApi {
     this.externalDocs,
   });
 
-  factory TagOpenApi.fromJson(Map<String, dynamic> map) => _$TagOpenApiFromJson(map);
+  factory TagOpenApi.fromJson(Map<dynamic, dynamic> map) => _$TagOpenApiFromJson(map);
   Map<String, dynamic> toJson() => _$TagOpenApiToJson(this);
 }
 
@@ -66,7 +66,7 @@ class ExternalDocsOpenApi {
     required this.url,
   });
 
-  factory ExternalDocsOpenApi.fromJson(Map<String, dynamic> map) =>
+  factory ExternalDocsOpenApi.fromJson(Map<dynamic, dynamic> map) =>
       _$ExternalDocsOpenApiFromJson(map);
   Map<String, dynamic> toJson() => _$ExternalDocsOpenApiToJson(this);
 }

@@ -66,7 +66,7 @@ class ApiCodecs extends Codecs {
 
   @override
   String encodeType(String name) =>
-      '${removeDiacritics(super.encodeType(name)).pascalCase}${options.dataClassesPostfix}';
+      '${removeDiacritics(super.encodeType(name)).pascalCase}${options.dataClassesPostfix ?? ''}';
 
   @override
   String encodeFieldName(String str) => super.encodeFieldName(removeDiacritics(str).camelCase);

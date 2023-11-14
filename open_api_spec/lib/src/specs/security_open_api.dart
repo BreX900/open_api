@@ -36,7 +36,7 @@ enum SecuritySchemeNameOpenApi {
     ..._$SecuritySchemeNameOpenApiEnumMap.map((key, value) => MapEntry(key, value.toLowerCase())),
   };
 
-  static SecuritySchemeNameOpenApi? fromJson(String value) =>
+  static SecuritySchemeNameOpenApi? fromJson(String? value) =>
       $enumDecodeNullable(_$securitySchemeNameOpenApiEnumMap, value);
 }
 
@@ -65,7 +65,7 @@ class SecuritySchemeOpenApi with PrettyJsonToString {
     this.openIdConnectUrl,
   });
 
-  factory SecuritySchemeOpenApi.fromJson(Map<String, dynamic> map) =>
+  factory SecuritySchemeOpenApi.fromJson(Map<dynamic, dynamic> map) =>
       _$SecuritySchemeOpenApiFromJson(map);
   @override
   Map<String, dynamic> toJson() => _$SecuritySchemeOpenApiToJson(this);
@@ -86,7 +86,7 @@ class OAuthFlowsOpenApi {
     this.authorizationCode,
   });
 
-  factory OAuthFlowsOpenApi.fromJson(Map<String, dynamic> map) => _$OAuthFlowsOpenApiFromJson(map);
+  factory OAuthFlowsOpenApi.fromJson(Map<dynamic, dynamic> map) => _$OAuthFlowsOpenApiFromJson(map);
   Map<String, dynamic> toJson() => _$OAuthFlowsOpenApiToJson(this);
 }
 
@@ -105,6 +105,6 @@ class OAuthFlowOpenApi {
     required this.scopes,
   });
 
-  factory OAuthFlowOpenApi.fromJson(Map<String, dynamic> map) => _$OAuthFlowOpenApiFromJson(map);
+  factory OAuthFlowOpenApi.fromJson(Map<dynamic, dynamic> map) => _$OAuthFlowOpenApiFromJson(map);
   Map<String, dynamic> toJson() => _$OAuthFlowOpenApiToJson(this);
 }

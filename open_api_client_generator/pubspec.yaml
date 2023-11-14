@@ -26,6 +26,8 @@ dependencies:
   open_api_spec:
     path: ./../open_api_spec
 
+  args: ^2.4.2
+
 dev_dependencies:
   mek_lints: ^2.0.0
 
@@ -34,3 +36,5 @@ dev_dependencies:
   fast_immutable_collections: ^9.1.5
   built_value: ^8.6.2
   built_collection: ^5.1.1
+
+  recase: ^4.1.0

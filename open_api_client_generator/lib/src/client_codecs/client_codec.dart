@@ -5,8 +5,6 @@ abstract class ClientCodec {
 
   Reference get type;
 
-  List<String> get filesPaths => const [];
-
   String encodeSendMethod(
     String method,
     String path, {
