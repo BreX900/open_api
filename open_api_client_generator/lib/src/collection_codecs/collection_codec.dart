@@ -1,7 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:open_api_client_generator/src/code_utils/reference_utils.dart';
 import 'package:open_api_client_generator/src/plugins/plugin.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 
 abstract class CollectionCodec {
   const CollectionCodec();

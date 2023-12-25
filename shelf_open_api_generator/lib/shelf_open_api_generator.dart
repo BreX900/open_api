@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
-import 'package:open_api_spec/open_api.dart';
+import 'package:open_api_specification/open_api.dart';
 import 'package:shelf_open_api/shelf_open_api.dart';
 import 'package:shelf_open_api/shelf_routing.dart';
 import 'package:shelf_open_api_generator/src/config.dart';
@@ -23,7 +23,7 @@ Builder buildOpenApi(BuilderOptions options) {
 
   return OpenApiBuilder(
     buildExtensions: {
-      'lib/{{}}.open_api.dart': ['public/{{}}.open_api.yaml']
+      '\$package\$': ['public/open_api.yaml']
     },
     config: config,
   );
@@ -31,6 +31,7 @@ Builder buildOpenApi(BuilderOptions options) {
 
 // https://github.com/dart-lang/build/blob/master/docs/writing_an_aggregate_builder.md
 class OpenApiBuilder implements Builder {
+  // static final _openApiType = TypeChecker.fromRuntime(OpenApiConfig);
   static final _routesType = TypeChecker.fromRuntime(Routes);
   static final _routeType = TypeChecker.fromRuntime(Route);
   static final _openApiRouteType = TypeChecker.fromRuntime(OpenApiRoute);
@@ -58,11 +59,8 @@ class OpenApiBuilder implements Builder {
     });
   }
 
-  @override
-  FutureOr<void> build(BuildStep buildStep) async {
+  String _generate(Iterable<LibraryElement> libraries) {
     final schemasRegistry = SchemasRegistry();
-
-    final libraries = await _findLibraryWithRoute(buildStep).toList();
 
     final elements = libraries.expand((e) {
       return LibraryReader(e).classes.expand(getAnnotatedElementsOrderBySourceOffset);
@@ -101,17 +99,23 @@ class OpenApiBuilder implements Builder {
 
     final routesHandler = RoutesHandler(
       config: config,
-      buildStep: buildStep,
       schemasRegistry: schemasRegistry,
       routes: routes,
     );
 
-    final openApi = await routesHandler.buildOpenApi();
+    final openApi = routesHandler.buildOpenApi();
     final rawOpenApi = organizeOpenApi(openApi.toJson());
-    final result = YamlEncoder(
+    return YamlEncoder(
       shouldMultilineStringInBlock: false,
       toEncodable: (o) => o.toJson(),
     ).convert(rawOpenApi);
+  }
+
+  @override
+  FutureOr<void> build(BuildStep buildStep) async {
+    final libraries = await _findLibraryWithRoute(buildStep).toList();
+
+    final result = _generate(libraries);
 
     await buildStep.writeAsString(buildStep.allowedOutputs.single, result);
   }

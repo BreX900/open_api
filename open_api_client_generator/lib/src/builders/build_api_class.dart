@@ -1,21 +1,23 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:collection/collection.dart';
-import 'package:open_api_client_generator/open_api_client_generator.dart';
 import 'package:open_api_client_generator/src/builders/build_schema_class.dart';
+import 'package:open_api_client_generator/src/client_codecs/client_codec.dart';
 import 'package:open_api_client_generator/src/code_utils/code_buffer.dart';
 import 'package:open_api_client_generator/src/code_utils/document.dart';
 import 'package:open_api_client_generator/src/code_utils/reference_utils.dart';
 import 'package:open_api_client_generator/src/code_utils/schema_to_reference.dart';
+import 'package:open_api_client_generator/src/collection_codecs/collection_codec.dart';
 import 'package:open_api_client_generator/src/options/context.dart';
+import 'package:open_api_client_generator/src/serialization_codec/serialization_codec.dart';
 import 'package:open_api_client_generator/src/utils/extensions.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 import 'package:recase/recase.dart';
 
 class BuildApiClass with ContextMixin {
   @override
   final Context context;
   final ClientCodec clientCodec;
-  final DataCodec dataCodec;
+  final SerializationCodec dataCodec;
   CollectionCodec get collectionCodec => dataCodec.collectionCodec;
   final BuildSchemaClass buildSchemaClass;
 

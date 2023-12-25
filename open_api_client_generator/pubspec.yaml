@@ -1,11 +1,16 @@
 name: open_api_client_generator
-description: A sample command-line application.
-publish_to: 'none'
+description: OpenApi Client Generator allows generation of API client libraries (SDK generation), server stubs, documentation and configuration automatically given an OpenAPI Spec.
+repository: https://github.com/BreX900/open_api
+issue_tracker: https://github.com/BreX900/open_api/issues
 version: 1.0.0
-# homepage: https://www.example.com
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ^3.0.0
+
+scripts:
+  build:library: index_generator
+  # To generate .g files:
+  build:runner: dart run build_runner watch --delete-conflicting-outputs --verbose
 
 dependencies:
   meta: ^1.7.0
@@ -23,18 +28,32 @@ dependencies:
 
   logging: ^1.2.0
 
-  open_api_spec:
-    path: ./../open_api_spec
+  open_api_specification: ^1.0.0
 
   args: ^2.4.2
 
 dev_dependencies:
-  mek_lints: ^2.0.0
+  mek_lints: ^3.0.0
 
+  # EXAMPLE
+  build_runner: ^2.4.6
+  json_serializable: ^6.7.1
+
+  # TOOLS
   dio: ^5.3.2
   json_annotation: ^4.8.1
   fast_immutable_collections: ^9.1.5
   built_value: ^8.6.2
   built_collection: ^5.1.1
 
-  recase: ^4.1.0
+dependency_overrides:
+  open_api_specification:
+    path: ./../open_api_spec
+
+index_generator:
+  exclude:
+    - '**.g.dart'
+  # Define the paths of the folders in which to generate the index files
+  indexes:
+    - path: ./lib
+      exclude: [ 'src/utils/**' ]

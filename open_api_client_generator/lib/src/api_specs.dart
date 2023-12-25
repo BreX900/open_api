@@ -1,5 +1,5 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 
 typedef Updates<T> = void Function(T b);
 

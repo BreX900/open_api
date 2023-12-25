@@ -47,7 +47,7 @@ class WebApiClient extends ApiClient implements DartApiClient {
 }
 
 ''';
-  static const String ioApiClient = r'''
+  static const String ioApiClient = '''
 import 'dart:convert';
 import 'dart:io';
 
@@ -84,7 +84,7 @@ class IoApiClient extends ApiClient implements DartApiClient {
 }
 
 ''';
-  static const String httpApiClient = r'''
+  static const String httpApiClient = '''
 import 'dart:convert';
 
 import 'package:http/http.dart';
@@ -111,7 +111,7 @@ class HttpApiClient extends ApiClient {
 }
 
 ''';
-  static const String apiClient = r'''
+  static const String apiClient = '''
 import 'dart:async';
 
 abstract class ApiClient {
@@ -192,7 +192,7 @@ class ApiClientException {
 }
 
 ''';
-  static const String dartApiClient = r'''
+  static const String dartApiClient = '''
 import 'api_client.dart';
 import 'io_api_client.dart' if (dart.html) 'web_api_client.dart';
 

@@ -1,7 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:open_api_client_generator/src/code_utils/reference_utils.dart';
 import 'package:open_api_client_generator/src/options/context.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 
 extension SchemaToType on ContextMixin {
   Reference schemaToType(SchemaOpenApi schema, {Reference? target}) {

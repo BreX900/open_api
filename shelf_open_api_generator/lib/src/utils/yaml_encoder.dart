@@ -65,7 +65,7 @@ class _YamlWriter {
     } else if (toEncodable != null) {
       write(toEncodable!(object));
     } else {
-      throw "Not support $object";
+      throw 'Not support $object';
     }
   }
 

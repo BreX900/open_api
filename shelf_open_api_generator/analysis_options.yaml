@@ -15,9 +15,11 @@ include: package:mek_lints/dart.yaml
 
 # Uncomment the following section to specify additional rules.
 
-# linter:
-#   rules:
-#     - camel_case_types
+linter:
+  rules:
+    missing_whitespace_between_adjacent_strings: false
+    unnecessary_library_directive: false
+    parameter_assignments: false
 
 # analyzer:
 #   exclude:

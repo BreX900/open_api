@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:open_api_spec/src/specs/ref_or_specs.dart';
-import 'package:open_api_spec/src/utils/specs_serialization.dart';
-import 'package:open_api_spec/src/utils/utils.dart';
+import 'package:open_api_specification/src/specs/ref_or_specs.dart';
+import 'package:open_api_specification/src/utils/specs_serialization.dart';
+import 'package:open_api_specification/src/utils/utils.dart';
 
 part 'schema.g.dart';
 
@@ -187,7 +187,7 @@ class SchemaOpenApi implements RefOr<SchemaOpenApi> {
 class _SchemaOpenApi extends RefOr<SchemaOpenApi> with PrettyJsonToString implements SchemaOpenApi {
   final Map<dynamic, dynamic> _json;
   SchemaOpenApi? _delegate$;
-  SchemaOpenApi get _delegate => (_delegate$ ??= _$SchemaOpenApiFromJson(_json));
+  SchemaOpenApi get _delegate => _delegate$ ??= _$SchemaOpenApiFromJson(_json);
 
   @override
   String? get title => _delegate.title;
@@ -264,7 +264,7 @@ extension SchemaOpenApiX on SchemaOpenApi {
     return true;
   }
 
-  /// A [schema] contains this property
+  /// A schema contains this property
   /// A property [name]
   bool isRequired(String name) {
     if ((required ?? const []).contains(name)) return true;

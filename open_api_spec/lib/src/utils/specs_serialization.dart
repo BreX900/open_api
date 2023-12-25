@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:open_api_spec/src/specs/ref_or_specs.dart';
-import 'package:open_api_spec/src/specs/schema.dart';
+import 'package:open_api_specification/src/specs/ref_or_specs.dart';
+import 'package:open_api_specification/src/specs/schema.dart';
 
 export 'package:json_annotation/json_annotation.dart' show $checkKeys, $checkedCreate;
 
@@ -32,7 +32,7 @@ class _RefOrOpenApiConverter<T extends RefOr<T>>
 
   @override
   RefOr<T> fromJson(Map<String, dynamic> json) {
-    final ref = json['\$ref'];
+    final ref = json[r'$ref'];
     if (ref != null) {
       return RefOpenApi(ref: ref);
     } else {

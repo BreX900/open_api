@@ -32,7 +32,7 @@ dev_dependencies:
     path: ../shelf_open_api_generator
 
 dependency_overrides:
-  open_api_spec:
+  open_api_specification:
     path: ../open_api_spec
   shelf_open_api:
     path: ../shelf_open_api

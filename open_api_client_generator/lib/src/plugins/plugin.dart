@@ -1,14 +1,16 @@
 import 'dart:async';
 
 import 'package:code_builder/code_builder.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 
 mixin class Plugin {
   const Plugin();
 
   FutureOr<void> onStart() {}
 
-  OpenApi onSpecification(Map<dynamic, dynamic> specifications, OpenApi openApi) => openApi;
+  Map<dynamic, dynamic> onSpecifications(Map<dynamic, dynamic> specifications) => specifications;
+
+  OpenApi onOpenApi(OpenApi openApi) => openApi;
 
   Class onApiClass(OpenApi openApi, Class spec) => spec;
 

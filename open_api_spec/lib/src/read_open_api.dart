@@ -30,7 +30,7 @@ Future<Map<dynamic, dynamic>> readOpenApiWithRefs(
   final data = await readOpenApi(input);
 
   final document = await _resolveDocumentRefs(input, data, data, cache: cache);
-  return {...document as Map<dynamic, dynamic>}..remove('parameters');
+  return {...document! as Map<dynamic, dynamic>}..remove('parameters');
 }
 
 Future<Object?> _resolveDocumentRefs(
@@ -44,11 +44,11 @@ Future<Object?> _resolveDocumentRefs(
       return await _resolveDocumentRefs(input, document, element, cache: cache);
     }));
   } else if (data is Map<dynamic, dynamic>) {
-    final ref = data['\$ref'] as String?;
+    final ref = data[r'$ref'] as String?;
     if (ref != null) return await readRef(input, document, ref, cache: cache);
 
-    return Map<dynamic, dynamic>.fromEntries(await Future.wait(data.entries.map((_) async {
-      final MapEntry(:key, :value) = _;
+    return Map<dynamic, dynamic>.fromEntries(await Future.wait(data.entries.map((e) async {
+      final MapEntry(:key, :value) = e;
       return MapEntry(key, await _resolveDocumentRefs(input, document, value, cache: cache));
     })));
   } else {
@@ -91,10 +91,10 @@ Future<Map<dynamic, dynamic>> readRef(
   final resolvedData = await _resolveDocumentRefs(uri, document, data, cache: cache);
 
   if (pendingData != null) {
-    pendingData.addAll(resolvedData as Map<dynamic, dynamic>);
+    pendingData.addAll(resolvedData! as Map<dynamic, dynamic>);
     return pendingData;
   } else {
-    return resolvedData as Map<dynamic, dynamic>;
+    return resolvedData! as Map<dynamic, dynamic>;
   }
 }
 

@@ -15,14 +15,15 @@ include: package:mek_lints/dart.yaml
 
 # Uncomment the following section to specify additional rules.
 
-# linter:
-#   rules:
-#     - camel_case_types
+linter:
+  rules:
+    missing_whitespace_between_adjacent_strings: false
+    unnecessary_library_directive: false
+    parameter_assignments: false
 
 analyzer:
   exclude:
-#    - example/google_maps/code/**
-#    - example/portit/code/**
+    - example/api/*
 
 # For more information about the core and recommended set of lints, see
 # https://dart.dev/go/core-lints

@@ -1,10 +1,9 @@
 import 'package:args/args.dart';
 import 'package:open_api_client_generator/open_api_client_generator.dart';
-import 'package:open_api_client_generator/src/data_codecs/built_value_data_codec.dart';
 
 void main(List<String> arguments) async {
   final argParser = ArgParser()
-    ..addFlag('help', negatable: false, defaultsTo: false)
+    ..addFlag('help', abbr: 'h', negatable: false)
     ..addOption('input',
         mandatory: true,
         help:
@@ -12,9 +11,10 @@ void main(List<String> arguments) async {
     ..addOption('api-class-name', defaultsTo: 'Api')
     ..addOption('data-classes-postfix')
     ..addOption('output-folder', mandatory: true)
-    ..addOption('client', allowed: ['dart', 'http', 'dio'])
-    ..addOption('collection', allowed: ['fast_immutable_collection', 'built_collection'])
-    ..addOption('data', mandatory: true, allowed: ['json_serializable', 'built_value'])
+    ..addOption('client', allowed: ['abstract', 'dart', 'http', 'dio'], defaultsTo: 'dart')
+    ..addOption('collection',
+        allowed: ['dart', 'fast_immutable_collection', 'built_collection'], defaultsTo: 'dart')
+    ..addOption('serialization', mandatory: true, allowed: ['json_serializable', 'built_value'])
     ..addMultiOption('plugins', allowed: ['mek_data_class'])
     ..addSeparator('Data Codec: json_serializable')
     ..addFlag('d-js-implicit-create', defaultsTo: true)
@@ -24,6 +24,7 @@ void main(List<String> arguments) async {
   final args = argParser.parse(arguments);
 
   if (args['help']) {
+    // ignore: avoid_print
     print(argParser.usage);
     return;
   }
@@ -38,49 +39,51 @@ void main(List<String> arguments) async {
   );
 
   final client = switch (args['client']) {
+    'abstract' => AbstractClientCodec(options: options),
     'dart' => DartClientCodec(options: options),
     'http' => HttpClientCodec(options: options),
-    'dio' => DioClientCodec(),
-    _ => AbstractClientCodec(options: options),
+    'dio' => const DioClientCodec(),
+    _ => throw StateError('Unsupported "client" option ${args['client']}'),
   };
 
   final data = _resolveDataCodec(args);
 
   final plugins = (args['plugins'] as List<String>).map((plugin) {
     return switch (plugin) {
-      'mek_data_class' => MekDataClassPlugin(),
-      _ => throw 'Plugin not supported',
+      'mek_data_class' => const MekDataClassPlugin(),
+      _ => throw StateError('Unsupported "plugins" option $plugin'),
     };
   }).toList();
 
   await generateApi(
     options: options,
     clientCodec: client,
-    dataCodec: data,
+    serializationCodec: data,
     plugins: plugins,
   );
 }
 
-DataCodec _resolveDataCodec(ArgResults args) {
-  final collection = switch (args['client']) {
-    'fast_immutable_collection' => FastImmutableCollectionCodec(),
-    'built_collection' => BuiltCollectionCodec(),
-    _ => DartCollectionCodec(),
+SerializationCodec _resolveDataCodec(ArgResults args) {
+  final collection = switch (args['collection']) {
+    'dart' => const DartCollectionCodec(),
+    'fast_immutable_collection' => const FastImmutableCollectionCodec(),
+    'built_collection' => const BuiltCollectionCodec(),
+    _ => throw StateError('Unsupported "collection" option ${args['collection']}'),
   };
 
-  switch (args['data']) {
+  switch (args['serialization']) {
     case 'json_serializable':
-      return JsonSerializableDataCodec(
+      return JsonSerializableSerializationCodec(
         collectionCodec: collection,
         implicitCreate: args['d-js-implicit-create'],
         classFieldRename: FieldRename.fromName(args['d-js-class-field-rename']),
         enumFieldRename: FieldRename.fromName(args['d-js-enum-field-rename']),
       );
     case 'built_value':
-      return BuiltValueDataCodec(
+      return BuiltValueSerializationCodec(
         collectionCodec: collection,
       );
     default:
-      throw '';
+      throw StateError('Unsupported "serialization" option ${args['serialization']}');
   }
 }

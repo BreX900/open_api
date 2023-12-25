@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:open_api_spec/src/utils/utils.dart';
+import 'package:open_api_specification/src/utils/utils.dart';
 
 mixin RefOrOpenApi<T extends RefOrOpenApi<T>> {
   String? get ref;
@@ -16,7 +16,7 @@ mixin RefOrOpenApi<T extends RefOrOpenApi<T>> {
 }
 
 class RefOpenApi<T extends Object> extends RefOr<T> with PrettyJsonToString {
-  @JsonKey(name: '\$ref')
+  @JsonKey(name: r'$ref')
   final String ref;
 
   const RefOpenApi({
@@ -27,7 +27,7 @@ class RefOpenApi<T extends Object> extends RefOr<T> with PrettyJsonToString {
   R fold<R>(R Function(String ref) onRef, R Function(T p1) on) => onRef(ref);
 
   @override
-  Map<String, dynamic> toJson() => {'\$ref': ref};
+  Map<String, dynamic> toJson() => {r'$ref': ref};
 }
 
 abstract class RefOr<T extends Object> {

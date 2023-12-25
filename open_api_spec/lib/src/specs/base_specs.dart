@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:open_api_spec/src/specs/info_specs.dart';
-import 'package:open_api_spec/src/specs/schema.dart';
-import 'package:open_api_spec/src/specs/security_open_api.dart';
-import 'package:open_api_spec/src/utils/specs_serialization.dart';
-import 'package:open_api_spec/src/utils/utils.dart';
+import 'package:open_api_specification/src/specs/info_specs.dart';
+import 'package:open_api_specification/src/specs/schema.dart';
+import 'package:open_api_specification/src/specs/security_open_api.dart';
+import 'package:open_api_specification/src/utils/specs_serialization.dart';
+import 'package:open_api_specification/src/utils/utils.dart';
 
 part 'base_specs.g.dart';
 
@@ -83,6 +83,7 @@ class ItemPathOpenApi with PrettyJsonToString {
       patch: usedOperations.remove('patch'),
     );
     if (usedOperations.isNotEmpty) {
+      // ignore: avoid_print
       print('[WARNING] Not consumed all item path methods: ${usedOperations.keys}');
     }
     return instance;

@@ -52,7 +52,7 @@ class Codecs {
   }
 
   String encodeDartValue(Object value) {
-    if (value is String) return "'${value.replaceAll('\$', '\\\$')}'";
+    if (value is String) return "'${value.replaceAll(r'$', r'\$')}'";
     return '$value';
   }
 

@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:open_api_client_generator/open_api_client_generator.dart';
 
 void main(List<String> args) async {
-  final root = './example/google_maps';
-  final codeDir = Directory('$root/code');
+  const root = './example/google_maps';
+  final codeDir = Directory('$root/api');
   if (!codeDir.existsSync()) codeDir.createSync();
 
   final options = Options(
@@ -15,7 +15,7 @@ void main(List<String> args) async {
   await generateApi(
     options: options,
     clientCodec: DartClientCodec(options: options),
-    dataCodec: JsonSerializableDataCodec(
+    serializationCodec: const JsonSerializableSerializationCodec(
       collectionCodec: FastImmutableCollectionCodec(),
       classFieldRename: FieldRename.snake,
     ),

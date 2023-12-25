@@ -15,9 +15,10 @@ extension IterableX<T> on Iterable<T> {
     R initialValue,
     FutureOr<R> Function(R previousValue, T element) combine,
   ) async {
+    var value = initialValue;
     for (final element in this) {
-      initialValue = await combine(initialValue, element);
+      value = await combine(value, element);
     }
-    return initialValue;
+    return value;
   }
 }

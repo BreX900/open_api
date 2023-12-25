@@ -1,11 +1,13 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:open_api_client_generator/open_api_client_generator.dart';
 import 'package:open_api_client_generator/src/api_specs.dart';
 import 'package:open_api_client_generator/src/code_utils/reference_utils.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_client_generator/src/collection_codecs/built_collection_codec.dart';
+import 'package:open_api_client_generator/src/plugins/plugin.dart';
+import 'package:open_api_client_generator/src/serialization_codec/serialization_codec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 
-class BuiltValueDataCodec extends DataCodec with Plugin {
-  BuiltValueDataCodec({super.collectionCodec = const BuiltCollectionCodec()});
+class BuiltValueSerializationCodec extends SerializationCodec with Plugin {
+  BuiltValueSerializationCodec({super.collectionCodec = const BuiltCollectionCodec()});
 
   var _factories = <Reference>[];
 
@@ -33,7 +35,7 @@ class BuiltValueDataCodec extends DataCodec with Plugin {
 
         return Method((b) => b
           ..annotations.addAll([
-            if (wireName != null) CodeExpression(Code('BuiltField(wireName: \'${e.key}\')')),
+            if (wireName != null) CodeExpression(Code("BuiltField(wireName: '${e.key}')")),
           ])
           ..returns = e.type
           ..type = MethodType.getter
@@ -49,7 +51,7 @@ class BuiltValueDataCodec extends DataCodec with Plugin {
 
         return e.toSpec((b) => b
           ..annotations.addAll([
-            if (wireName != null) CodeExpression(Code('BuiltField(wireName: \'$wireName\')')),
+            if (wireName != null) CodeExpression(Code("BuiltField(wireName: '$wireName')")),
           ]));
       })));
   }
@@ -59,9 +61,9 @@ class BuiltValueDataCodec extends DataCodec with Plugin {
     return spec.rebuild((b) => b
       ..directives.add(Directive.import('package:json_annotation/json_annotation.dart'))
       ..body.add(Field((b) => b
-        ..type = Reference('Serializers')
+        ..type = const Reference('Serializers')
         ..name = '_serializers'
-        ..assignment = Code('_\$_serializers'))));
+        ..assignment = const Code(r'_$_serializers'))));
   }
 
   @override

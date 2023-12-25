@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:open_api_client_generator/src/options/options.dart';
 import 'package:open_api_client_generator/src/plugins/plugin.dart';
 import 'package:open_api_client_generator/src/utils/file_utils.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 import 'package:recase/recase.dart';
 
 class WriteOpenApiPlugin with Plugin {
@@ -21,10 +21,14 @@ class WriteOpenApiPlugin with Plugin {
   late Map<dynamic, dynamic> _specifications;
 
   @override
-  OpenApi onSpecification(Map<dynamic, dynamic> specifications, OpenApi openApi) {
-    _fileName = openApi.info.title.snakeCase;
+  Map<dynamic, dynamic> onSpecifications(Map<dynamic, dynamic> specifications) {
     _specifications = specifications;
+    return specifications;
+  }
 
+  @override
+  OpenApi onOpenApi(OpenApi openApi) {
+    _fileName = openApi.info.title.snakeCase;
     return openApi;
   }
 

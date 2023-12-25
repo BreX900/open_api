@@ -1,9 +1,6 @@
-import 'dart:async';
-
 import 'package:analyzer/dart/element/element.dart';
-import 'package:build/build.dart';
 import 'package:collection/collection.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 import 'package:shelf_open_api_generator/src/config.dart';
 import 'package:shelf_open_api_generator/src/handlers/route_handler.dart';
 import 'package:shelf_open_api_generator/src/schemas_registry.dart';
@@ -12,18 +9,16 @@ import 'package:shelf_open_api_generator/src/utils/utils.dart';
 
 class RoutesHandler {
   final Config config;
-  final BuildStep buildStep;
   final SchemasRegistry schemasRegistry;
   final List<RouteHandler> routes;
 
   RoutesHandler({
     required this.config,
-    required this.buildStep,
     required this.schemasRegistry,
     required this.routes,
   });
 
-  Future<OpenApi> buildOpenApi() async {
+  OpenApi buildOpenApi() {
     final routesInPaths = routes.groupListsBy((e) => e.path);
 
     return OpenApi(

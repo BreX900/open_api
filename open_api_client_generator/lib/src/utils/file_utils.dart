@@ -5,8 +5,8 @@ abstract class FileUtils {
     return json2yaml(_jsonToYaml(json));
   }
 
-  static final _badKeys = RegExp(r'[*#]');
-  static dynamic _jsonToYaml(dynamic node) {
+  static final _badKeys = RegExp('[*#]');
+  static dynamic _jsonToYaml(Object? node) {
     if (node is List) {
       return <dynamic>[
         for (final value in node) _jsonToYaml(value),
@@ -16,7 +16,7 @@ abstract class FileUtils {
         for (final e in node.entries) '${_jsonToYaml(e.key)}': _jsonToYaml(e.value),
       };
     } else if (node is String) {
-      node = node.replaceAll('"', '\\"');
+      node = node.replaceAll('"', r'\"');
       return _badKeys.hasMatch(node) ? '"$node"' : node;
     }
     return node;

@@ -2,12 +2,12 @@ import 'package:code_builder/code_builder.dart';
 import 'package:open_api_client_generator/src/api_specs.dart';
 import 'package:open_api_client_generator/src/code_utils/reference_utils.dart';
 import 'package:open_api_client_generator/src/collection_codecs/dart_collection_codec.dart';
-import 'package:open_api_client_generator/src/data_codecs/data_codec.dart';
 import 'package:open_api_client_generator/src/plugins/plugin.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_client_generator/src/serialization_codec/serialization_codec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 import 'package:recase/recase.dart';
 
-/// Values for the automatic field renaming behavior for [JsonSerializable].
+/// Values for the automatic field renaming behavior for `JsonSerializable`.
 enum FieldRename {
   /// Use the field name without changes.
   none,
@@ -31,14 +31,14 @@ enum FieldRename {
   }
 }
 
-class JsonSerializableDataCodec extends DataCodec with Plugin {
+class JsonSerializableSerializationCodec extends SerializationCodec with Plugin {
   final bool implicitCreate;
   final Type? classAnnotation;
   final FieldRename? classFieldRename;
   final Type? enumAnnotation;
   final FieldRename? enumFieldRename;
 
-  const JsonSerializableDataCodec({
+  const JsonSerializableSerializationCodec({
     super.collectionCodec = const DartCollectionCodec(),
     this.implicitCreate = true,
     this.classAnnotation,
@@ -108,7 +108,7 @@ class JsonSerializableDataCodec extends DataCodec with Plugin {
 
         return e.toField((b) => b
           ..annotations.addAll([
-            if (wireName != null) CodeExpression(Code('JsonKey(name: \'${e.key}\')')),
+            if (wireName != null) CodeExpression(Code("JsonKey(name: '${e.key}')")),
           ])
           ..modifier = FieldModifier.final$);
       }))
@@ -140,7 +140,7 @@ class JsonSerializableDataCodec extends DataCodec with Plugin {
 
         return e.toSpec((b) => b
           ..annotations.addAll([
-            if (wireName != null) CodeExpression(Code('JsonValue(\'$wireName\')')),
+            if (wireName != null) CodeExpression(Code("JsonValue('$wireName')")),
           ]));
       })));
   }

@@ -58,6 +58,7 @@ extension ReferenceExtensions on Reference {
     return self is TypeReference ? self.types : const [];
   }
 
+  // ignore: avoid_positional_boolean_parameters
   Reference toNullable([bool? nullable = true]) {
     return TypeReference((b) => b
       ..symbol = symbol

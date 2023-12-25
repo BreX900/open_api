@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:open_api_spec/src/utils/specs_serialization.dart';
-import 'package:open_api_spec/src/utils/utils.dart';
+import 'package:open_api_specification/src/utils/specs_serialization.dart';
+import 'package:open_api_specification/src/utils/utils.dart';
 
 part 'security_open_api.g.dart';
 

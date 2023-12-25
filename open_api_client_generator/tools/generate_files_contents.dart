@@ -8,9 +8,9 @@ void main() {
 
   final variabiles = root.listSync().map((file) {
     final content = File(file.path).readAsStringSync();
-    return '  static const String ${basenameWithoutExtension(file.path).camelCase} = r\'\'\'\n'
+    return "  static const String ${basenameWithoutExtension(file.path).camelCase} = r'''\n"
         '$content'
-        '\n\'\'\';';
+        "\n''';";
   });
 
   File('./lib/src/utils/files_contents.dart')

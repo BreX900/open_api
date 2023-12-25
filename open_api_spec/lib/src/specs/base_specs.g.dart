@@ -1,5 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+// ignore_for_file: cast_nullable_to_non_nullable, avoid_annotating_with_dynamic
+
 part of 'base_specs.dart';
 
 // **************************************************************************

@@ -1,10 +1,11 @@
 
-This library is under development, any help is welcome
 
 # Shelf Open Api
 
 The purpose of this library is to expose the generation of file with open api specifications from your shelf controllers
 [OpenApi Specification]
+
+This library is under development, any help is welcome
 
 ## Features
 
@@ -41,20 +42,15 @@ dev_dependencies:
 
 > You can see some examples in [example] folder.
 
-Create a lib file ending with `*.open_api.dart`.
-
-You can write whatever you want, for example this:
-```dart
-final openApi = 'place holder for shelf_open_api_generator package';
-```
-
 Run the code generator, you can use:
 - `<dart|flutter> pub run build_runner build`
+
+You can see the generated result in the `public` folder!
 
 Done! See options for more info/configurations.
 But now let's type the routes!
 
-Use OpenApiRoute on routes where the query type or body type needs to be defined.
+Use `OpenApiRoute` on routes where the query type or body type needs to be defined.
 Remember that you can define the summary and description for each route.
 The summary is the first line of each method and must only be in one line otherwise it will be a description of your route.
 The [JsonResponse] class can be found in the example. Should I add it to [shelf_open_api] package?
@@ -167,10 +163,14 @@ targets:
           - '**/*_api.dart'
 ```
 
+## More
+
+[open_api_client_generator] The purpose of this library is to expose the generation of file with open api specifications from your shelf controllers
 
 [JsonResponse]: example/lib/shared/json_response.dart
 [example]: example
 [build_runner]: https://pub.dev/packages/build_runner
-[shelf_open_api]: https://pub.dartlang.org/packages/shelf_open_api
-[shelf_open_api_generator]: https://pub.dartlang.org/packages/shelf_open_api_generator
+[shelf_open_api]: https://pub.dev/packages/shelf_open_api
+[shelf_open_api_generator]: https://pub.dev/packages/shelf_open_api_generator
 [OpenApi Specification]: https://swagger.io/specification/v3/
+[open_api_client_generator]: https://pub.dev/packages/open_api_client_generator

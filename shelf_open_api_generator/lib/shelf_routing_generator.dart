@@ -37,29 +37,25 @@ class RoutingGenerator extends GeneratorForAnnotation<Routing> {
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {
-    try {
-      final routing = Routing(
-        varName: annotation.read('varName').stringValue,
-        generateFor: annotation.read('generateFor').listValue.map((e) {
-          return e.toStringValue()!;
-        }).toList(),
-      );
-      final routers = await _findRouters(buildStep, routing.generateFor.map(Glob.new)).toList();
+    final routing = Routing(
+      varName: annotation.read('varName').stringValue,
+      generateFor: annotation.read('generateFor').listValue.map((e) {
+        return e.toStringValue()!;
+      }).toList(),
+    );
+    final routers = await _findRouters(buildStep, routing.generateFor.map(Glob.new)).toList();
 
-      final varName = '\$${routing.varName}';
-      final mountedRouters = routers.map((e) {
-        return "..mount('${e.annotation.prefix}', ${e.element.name}().router)";
-      });
-      final importRouters = routers.map((e) => "import '${e.element.library.identifier}';");
-      final result = "import 'package:shelf_router/shelf_router.dart';\n"
-          '${importRouters.map((e) => '$e\n').join()}'
-          '\n'
-          'final $varName = Router()${mountedRouters.map((e) => '\n  $e').join('')};';
+    final varName = '\$${routing.varName}';
+    final mountedRouters = routers.map((e) {
+      return "..mount('${e.annotation.prefix}', ${e.element.name}().router)";
+    });
+    final importRouters = routers.map((e) => "import '${e.element.library.identifier}';");
+    final result = "import 'package:shelf_router/shelf_router.dart';\n"
+        '${importRouters.map((e) => '$e\n').join()}'
+        '\n'
+        'Router get $varName => Router()${mountedRouters.map((e) => '\n  $e').join('')};';
 
-      await buildStep.writeAsString(buildStep.allowedOutputs.single, result);
-    } catch (error, stackTrace) {
-      log.severe('$error\n$stackTrace');
-    }
+    await buildStep.writeAsString(buildStep.allowedOutputs.single, result);
   }
 
   Stream<_RouterAnnotated> _findRouters(BuildStep buildStep, Iterable<Glob> generateFor) {

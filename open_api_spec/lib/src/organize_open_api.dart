@@ -16,7 +16,7 @@ Map<String, dynamic> organizeOpenApi(Map<String, dynamic> document) {
     final title = schema['title'] as String?;
     if (title != null) {
       schemas[title] = schema;
-      return {'\$ref': '#/components/schemas/$title'};
+      return {r'$ref': '#/components/schemas/$title'};
     }
     return schema;
   }
@@ -42,8 +42,8 @@ Map<String, dynamic> organizeOpenApi(Map<String, dynamic> document) {
     'paths': (document['paths'] as Map<String, dynamic>).map((path, endPoint) {
       final newEndpoint = (endPoint as Map<String, dynamic>).map((operationId, operation) {
         operation as Map<String, dynamic>;
-        final requestBody = (operation['requestBody'] as Map<String, dynamic>?);
-        final responses = (operation['responses'] as Map<String, dynamic>?);
+        final requestBody = operation['requestBody'] as Map<String, dynamic>?;
+        final responses = operation['responses'] as Map<String, dynamic>?;
 
         return MapEntry(operationId, {
           ...operation,

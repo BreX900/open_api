@@ -1,4 +1,4 @@
-import 'package:open_api_spec/src/utils/specs_serialization.dart';
+import 'package:open_api_specification/src/utils/specs_serialization.dart';
 
 part 'info_specs.g.dart';
 

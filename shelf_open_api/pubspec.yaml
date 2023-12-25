@@ -5,10 +5,10 @@ issue_tracker: https://github.com/BreX900/open_api/issues
 version: 1.1.0
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ^3.0.0
 
 dependencies:
   meta: ^1.9.0
 
 dev_dependencies:
-  mek_lints: ^1.0.0
+  mek_lints: ^3.0.0

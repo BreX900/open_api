@@ -8,41 +8,40 @@ import 'package:open_api_client_generator/src/builders/build_api_class.dart';
 import 'package:open_api_client_generator/src/builders/build_schema_class.dart';
 import 'package:open_api_client_generator/src/client_codecs/client_codec.dart';
 import 'package:open_api_client_generator/src/code_utils/codecs.dart';
-import 'package:open_api_client_generator/src/data_codecs/data_codec.dart';
 import 'package:open_api_client_generator/src/options/context.dart';
 import 'package:open_api_client_generator/src/options/options.dart';
 import 'package:open_api_client_generator/src/plugins/plugin.dart';
-import 'package:open_api_client_generator/src/utils/extensions.dart';
-import 'package:open_api_spec/open_api.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_client_generator/src/serialization_codec/serialization_codec.dart';
+import 'package:open_api_client_generator/src/utils/lg.dart';
+import 'package:open_api_specification/open_api.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 import 'package:path/path.dart' as path_;
 
 Future<void> generateApi({
   required Options options,
-  required DataCodec dataCodec,
+  required SerializationCodec serializationCodec,
   required ClientCodec clientCodec,
   List<Plugin> plugins = const [],
   DartFormatter? formatter,
 }) async {
   final timer = DateTime.now();
-  print('StartAt: $timer');
+  lg.finest('StartAt: $timer');
 
   final works = <Future>[];
   final allPlugins = <Plugin>[
     if (clientCodec is Plugin) clientCodec as Plugin,
-    if (dataCodec is Plugin) dataCodec as Plugin,
-    if (dataCodec.collectionCodec is Plugin) dataCodec.collectionCodec as Plugin,
+    if (serializationCodec is Plugin) serializationCodec as Plugin,
+    if (serializationCodec.collectionCodec is Plugin) serializationCodec.collectionCodec as Plugin,
     ...plugins
   ];
   await Future.wait(allPlugins.map((plugin) async => await plugin.onStart()));
-  final rawOpenApi = await readOpenApiWithRefs(options.input);
-  print('ReadSpecs: ${DateTime.now().difference(timer)}');
+  var specs = await readOpenApiWithRefs(options.input);
+  specs = allPlugins.fold(specs, (specs, plugin) => plugin.onSpecifications(specs));
+  lg.finest('ReadSpecs: ${DateTime.now().difference(timer)}');
 
-  var openApi = OpenApi.fromJson(rawOpenApi);
-  openApi = await allPlugins.asyncFold(openApi, (openApi, plugin) {
-    return plugin.onSpecification(rawOpenApi, openApi);
-  });
-  print('ParseSpecs: ${DateTime.now().difference(timer)}');
+  var openApi = OpenApi.fromJson(specs);
+  openApi = allPlugins.fold(openApi, (openApi, plugin) => plugin.onOpenApi(openApi));
+  lg.finest('ParseSpecs: ${DateTime.now().difference(timer)}');
 
   final versions = openApi.openapi.split('.');
   if (versions.length != 3) {
@@ -75,7 +74,7 @@ Future<void> generateApi({
   final buildApiClass = BuildApiClass(
     context: context,
     clientCodec: clientCodec,
-    dataCodec: dataCodec,
+    dataCodec: serializationCodec,
     buildSchemaClass: buildSchemaClass,
   );
 
@@ -85,11 +84,11 @@ Future<void> generateApi({
   final dataSpecs = buildSchemaClass.apiSpecs.map<Spec>((apiSpec) {
     switch (apiSpec) {
       case ApiClass():
-        var spec = dataCodec.buildDataClass(apiSpec);
+        var spec = serializationCodec.buildDataClass(apiSpec);
         spec = allPlugins.fold(spec, (spec, plugin) => plugin.onDataClass(apiSpec.schema, spec));
         return spec;
       case ApiEnum():
-        var spec = dataCodec.buildDataEnum(apiSpec);
+        var spec = serializationCodec.buildDataEnum(apiSpec);
         spec = allPlugins.fold(spec, (spec, plugin) => plugin.onDataEnum(apiSpec.schema, spec));
         return spec;
     }
@@ -115,6 +114,5 @@ Future<void> generateApi({
   }
 
   await Future.wait(works);
-  // ignore: avoid_print
-  print('TotalTime: ${DateTime.now().difference(timer)}');
+  lg.finest('TotalTime: ${DateTime.now().difference(timer)}');
 }

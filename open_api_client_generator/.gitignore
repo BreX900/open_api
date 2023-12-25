@@ -19,6 +19,4 @@ pubspec.lock
 build/
 
 # Custom
-/example/*.*
-/example/*/**
-!/example/*/build_*_api.dart
+/example/*/*/**

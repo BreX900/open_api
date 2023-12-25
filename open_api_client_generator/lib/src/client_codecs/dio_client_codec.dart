@@ -5,7 +5,7 @@ class DioClientCodec extends ClientCodec {
   const DioClientCodec();
 
   @override
-  Reference get type => Reference('Dio', 'package:dio/dio.dart');
+  Reference get type => const Reference('Dio', 'package:dio/dio.dart');
 
   @override
   String encodeSendMethod(
@@ -15,7 +15,7 @@ class DioClientCodec extends ClientCodec {
     String? dataVar,
   }) {
     final b = StringBuffer();
-    b.write('await client.${method.toLowerCase()}(\'$path\'');
+    b.write("await client.${method.toLowerCase()}('$path'");
     if (dataVar != null) b.write(', data: $dataVar');
     if (queryParametersVar != null) b.write(', queryParameters: $queryParametersVar');
     b.write(');');

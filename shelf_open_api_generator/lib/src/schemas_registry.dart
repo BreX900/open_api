@@ -3,7 +3,7 @@ import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 import 'package:shelf_open_api_generator/src/utils/doc.dart';
 import 'package:source_gen/source_gen.dart';
 

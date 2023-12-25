@@ -4,7 +4,7 @@ import 'package:open_api_client_generator/src/code_utils/document.dart';
 import 'package:open_api_client_generator/src/code_utils/reference_utils.dart';
 import 'package:open_api_client_generator/src/code_utils/schema_to_reference.dart';
 import 'package:open_api_client_generator/src/options/context.dart';
-import 'package:open_api_spec/open_api_spec.dart';
+import 'package:open_api_specification/open_api_spec.dart';
 
 class BuildSchemaClass with ContextMixin {
   @override
@@ -19,6 +19,7 @@ class BuildSchemaClass with ContextMixin {
   Iterable<ApiSpec> get apiSpecs => _cache.values.map((e) => e.spec);
 
   Reference call(String name, SchemaOpenApi schema) {
+    // ignore: parameter_assignments
     name = schema.title ?? name;
 
     final cacheEntry = _cache[name];
@@ -91,8 +92,8 @@ class BuildSchemaClass with ContextMixin {
           docs: docs,
           name: className,
           implements: _buildImplements(implements).map((e) => e.symbol!).toList(),
-          fields: properties.entries.map((_) {
-            final MapEntry(key: name, value: prop) = _;
+          fields: properties.entries.map((entry) {
+            final MapEntry(key: name, value: prop) = entry;
 
             return ApiField(
               key: name,
@@ -108,6 +109,7 @@ class BuildSchemaClass with ContextMixin {
     }
     final reference = schemaToType(schema);
     if (!reference.isDartCore) {
+      // ignore: avoid_print
       print('$name $schema');
     }
 
