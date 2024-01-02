@@ -20,7 +20,7 @@ class BuildSchemaClass with ContextMixin {
 
   Reference call(String name, SchemaOpenApi schema) {
     // ignore: parameter_assignments
-    name = schema.title ?? name;
+    name = schema.name ?? name;
 
     final cacheEntry = _cache[name];
     if (cacheEntry != null) return cacheEntry.type;
@@ -35,14 +35,6 @@ class BuildSchemaClass with ContextMixin {
     return builtSchema.type;
   }
 
-  Iterable<Reference> _buildImplements(Iterable<String> refs) sync* {
-    for (final ref in refs) {
-      final reference = Reference(codecs.encodeType(ref.split('/').last));
-      // if (ref.split('/').last == 'Bundle') print('$schemaOrRef');
-      yield reference;
-    }
-  }
-
   _BuiltSchema _build(String name, SchemaOpenApi schema) {
     final docs = Docs.format(Docs.documentClass(
       description: schema.description,
@@ -53,7 +45,7 @@ class BuildSchemaClass with ContextMixin {
     if (items != null) {
       return _BuiltSchema(
         // docs: docs.followedBy(built.docs ?? const []),
-        type: schemaToType(schema),
+        type: ref(schema),
         children: {name: items},
       );
     }
@@ -81,7 +73,8 @@ class BuildSchemaClass with ContextMixin {
     if (schema.isClass) {
       final properties = schema.allProperties;
       final allOf = schema.allOf ?? const [];
-      final implements = allOf.map((e) => e.title).nonNulls;
+      final implements = allOf.where((e) => e.name != null).toList();
+      final implementsNames = implements.map((e) => codecs.encodeType(e.name!)).toList();
 
       final className = codecs.encodeType(name);
 
@@ -91,7 +84,7 @@ class BuildSchemaClass with ContextMixin {
           schema: schema,
           docs: docs,
           name: className,
-          implements: _buildImplements(implements).map((e) => e.symbol!).toList(),
+          implements: implementsNames,
           fields: properties.entries.map((entry) {
             final MapEntry(key: name, value: prop) = entry;
 
@@ -99,15 +92,15 @@ class BuildSchemaClass with ContextMixin {
               key: name,
               docs: const [], // TODO:  prop.docs ??
               isRequired: schema.isRequired(name),
-              type: schemaToType(prop).toNullable(schema.canNull(name, properties[name]!)),
-              name: codecs.encodeFieldName(name),
+              type: ref(prop).toNullable(schema.canNull(name, properties[name]!)),
+              name: codecs.encodeName(name),
             );
           }).toList(),
         ),
-        children: properties,
+        children: {...Map.fromEntries(implements.map((e) => MapEntry(e.name!, e))), ...properties},
       );
     }
-    final reference = schemaToType(schema);
+    final reference = ref(schema);
     if (!reference.isDartCore) {
       // ignore: avoid_print
       print('$name $schema');

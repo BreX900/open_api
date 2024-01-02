@@ -17,8 +17,9 @@ class FastImmutableCollectionCodec extends CollectionCodecBase {
 
   @override
   String encodeToCore(Reference type) {
-    if (type.isList) return '.toList()';
-    if (type.isMap) return '.unlockView';
+    final questionOrEmpty = type.isNullable ? '?' : '';
+    if (type.isList) return '$questionOrEmpty.toList()';
+    if (type.isMap) return '$questionOrEmpty.unlockView';
     return '';
   }
 

@@ -99,6 +99,7 @@ Future<void> generateApi({
       'unnecessary_brace_in_string_interps',
       'no_leading_underscores_for_local_identifiers',
       'always_use_package_imports',
+      'cast_nullable_to_non_nullable',
     ])
     ..directives.add(Directive.part('${path_.basenameWithoutExtension(apiFileName)}.g.dart'))
     ..body.add(apiSpec)

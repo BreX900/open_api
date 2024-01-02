@@ -69,18 +69,13 @@ enum TypeOpenApi {
   object,
 }
 
-extension TypeOpenApiExt on TypeOpenApi {
-  String toJson() => _$TypeOpenApiEnumMap[this]!;
-  static TypeOpenApi? maybeFromJson(String? type) =>
-      $enumDecodeNullable(_$TypeOpenApiEnumMap, type);
-}
-
-@JsonEnum()
 enum FormatOpenApi {
   int32,
   int64,
   double,
   float,
+  string,
+
   date,
   @JsonValue('date-time')
   dateTime,
@@ -93,20 +88,18 @@ enum FormatOpenApi {
   /// File upload
   binary,
   base64;
-
-  String toJson() => _$FormatOpenApiEnumMap[this]!;
-  static FormatOpenApi? maybeFromJson(String? type) =>
-      $enumDecodeNullable(_$FormatOpenApiEnumMap, type);
 }
 
 @SpecsSerializable()
 class SchemaOpenApi implements RefOr<SchemaOpenApi> {
+  final String? name;
   final String? title;
   final String? description;
   final Object? example;
 
   final TypeOpenApi? type;
 
+  @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)
   final FormatOpenApi? format;
 
   /// With [TypeOpenApi.integer] | [TypeOpenApi.string]
@@ -159,6 +152,7 @@ class SchemaOpenApi implements RefOr<SchemaOpenApi> {
   // enum
 
   const SchemaOpenApi({
+    this.name,
     this.title,
     this.description,
     this.example,
@@ -189,6 +183,8 @@ class _SchemaOpenApi extends RefOr<SchemaOpenApi> with PrettyJsonToString implem
   SchemaOpenApi? _delegate$;
   SchemaOpenApi get _delegate => _delegate$ ??= _$SchemaOpenApiFromJson(_json);
 
+  @override
+  String? get name => _delegate.name;
   @override
   String? get title => _delegate.title;
   @override

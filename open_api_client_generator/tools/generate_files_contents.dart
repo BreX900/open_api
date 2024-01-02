@@ -4,17 +4,18 @@ import 'package:path/path.dart';
 import 'package:recase/recase.dart';
 
 void main() {
-  final root = Directory('./tools/files');
+  final root = Directory('./tools/files_contents');
 
-  final variabiles = root.listSync().map((file) {
+  final variables = root.listSync().map((file) {
     final content = File(file.path).readAsStringSync();
-    return "  static const String ${basenameWithoutExtension(file.path).camelCase} = r'''\n"
+    final rawStringChar = content.contains(r'$') ? 'r' : '';
+    return "  static const String ${basenameWithoutExtension(file.path).camelCase} = $rawStringChar'''\n"
         '$content'
         "\n''';";
   });
 
   File('./lib/src/utils/files_contents.dart')
       .writeAsStringSync('abstract final class FilesContents {\n'
-          '${variabiles.join('\n')}'
-          '\n}');
+          '${variables.join('\n')}'
+          '\n}\n');
 }

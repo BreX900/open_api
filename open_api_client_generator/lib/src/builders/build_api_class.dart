@@ -33,13 +33,13 @@ class BuildApiClass with ContextMixin {
     required String name,
     required String path,
   }) {
-    if (id != null) return id;
+    if (id != null) return codecs.encodeName(id);
     return '$name${path.replaceAll('/', '_').replaceAll('{', '').replaceAll('}', '').pascalCase}';
   }
 
   String encodePath(String path) {
-    return path.replaceAllMapped(RegExp(r'(\{\w*\})'), (match) {
-      return '\$${codecs.encodeFieldName(match.group(0)!)}';
+    return path.replaceAllMapped(RegExp(r'\{(\w*)\}'), (match) {
+      return '\$${codecs.encodeName(match.group(1)!)}';
     });
   }
 
@@ -56,7 +56,10 @@ class BuildApiClass with ContextMixin {
     if (queryParameters.isNotEmpty) {
       b.write('final _queryParameters = <String, Object?>{\n');
       b.writeAll(queryParameters.map((e) {
-        return '${codecs.encodeDartValue(e.name)}: ${e.name.camelCase}${collectionCodec.encodeToCore(schemaToType(e.schema!))},\n';
+        final key = codecs.encodeDartValue(e.name);
+        final varName = codecs.encodeName(e.name);
+        final varEncoder = collectionCodec.encodeToCore(ref(e.schema!).toNullable(!e.required));
+        return '$key: $varName$varEncoder,\n';
       }));
       b.write('};\n');
     }
@@ -154,7 +157,7 @@ class BuildApiClass with ContextMixin {
         description: operation.description,
         params: operation.parameters.expand((param) {
           return Docs.documentField(
-            name: codecs.encodeFieldName(param.name),
+            name: codecs.encodeName(param.name),
             description: param.description,
             example: param.example,
           );
@@ -164,8 +167,8 @@ class BuildApiClass with ContextMixin {
       ..name = methodName
       ..requiredParameters.addAll(pathParameters.map((param) {
         return Parameter((b) => b
-          ..type = schemaToType(param.schema!) //.toNull(!param.required)
-          ..name = codecs.encodeFieldName(param.name));
+          ..type = ref(param.schema!).toNullable(!param.required)
+          ..name = codecs.encodeName(param.name));
       }))
       ..requiredParameters.addAll([
         if (request != null && requestSchema != null)
@@ -173,15 +176,13 @@ class BuildApiClass with ContextMixin {
             ..type = requestType
             ..name = '_request')
       ])
-      ..optionalParameters.addAll([
-        ...queryParameters.map((e) {
-          return Parameter((b) => b
-            ..named = true
-            ..required = e.required
-            ..type = schemaToType(e.schema!).toNullable(!e.required)
-            ..name = e.name.camelCase);
-        }),
-      ])
+      ..optionalParameters.addAll(queryParameters.map((e) {
+        return Parameter((b) => b
+          ..named = true
+          ..required = e.required
+          ..type = ref(e.schema!).toNullable(!e.required)
+          ..name = codecs.encodeName(e.name));
+      }))
       ..modifier = MethodModifier.async
       ..body = Code(operationCode));
   }

@@ -136,11 +136,16 @@ OperationOpenApi _$OperationOpenApiFromJson(Map json) => $checkedCreate(
           security: $checkedConvert(
               'security',
               (v) =>
-                  (v as Map?)?.map(
-                    (k, e) => MapEntry(k as String,
-                        (e as List<dynamic>).map((e) => e as String).toList()),
-                  ) ??
-                  const {}),
+                  (v as List<dynamic>?)
+                      ?.map((e) => (e as Map).map(
+                            (k, e) => MapEntry(
+                                k as String,
+                                (e as List<dynamic>)
+                                    .map((e) => e as String)
+                                    .toList()),
+                          ))
+                      .toList() ??
+                  const []),
           servers: $checkedConvert(
               'servers',
               (v) =>

@@ -85,12 +85,14 @@ class OpenApiBuilder implements Builder {
           schemasRegistry: schemasRegistry,
           path: '$routePrefix$route',
           method: routeAnnotation.read('verb').stringValue,
-          security: (openApiAnnotation.peek('security')?.mapReader ?? const {}).map((key, value) {
-            return MapEntry(
-              key.stringValue,
-              value.listReader.map((e) => e.stringValue).toList(),
-            );
-          }),
+          security: (openApiAnnotation.peek('security')?.listReader ?? const []).map((security) {
+            return security.mapReader.map((securitySchemeKey, permissions) {
+              return MapEntry(
+                securitySchemeKey.stringValue,
+                permissions.listReader.map((e) => e.stringValue).toList(),
+              );
+            });
+          }).toList(),
           requestQuery: openApiAnnotation.peek('requestQuery')?.typeValue,
           requestBody: openApiAnnotation.peek('requestBody')?.typeValue,
         );

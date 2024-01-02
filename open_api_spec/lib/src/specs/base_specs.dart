@@ -128,7 +128,7 @@ class OperationOpenApi with PrettyJsonToString {
   final bool deprecated;
 
   @JsonKey(toJson: $nullIfEmpty)
-  final Map<String, List<String>> security;
+  final List<Map<String, List<String>>> security;
   @JsonKey(toJson: $nullIfEmpty)
   final List<ServerOpenApi> servers;
 
@@ -141,7 +141,7 @@ class OperationOpenApi with PrettyJsonToString {
     this.requestBody,
     required this.responses,
     this.deprecated = false,
-    this.security = const {},
+    this.security = const [],
     this.servers = const [],
   });
 
@@ -168,11 +168,13 @@ class OperationOpenApi with PrettyJsonToString {
   Map<String, dynamic> toJson() => _$OperationOpenApiToJson(this);
 
   static Map<int, ResponseOpenApi> _responsesFromJson(Map<dynamic, dynamic> json) {
-    return json.map((key, value) {
-      return MapEntry(
-        key is int ? key : int.parse(key as String),
-        ResponseOpenApi.fromJson(value as Map),
-      );
+    return json.map((code, response) {
+      if (code is String) {
+        code = code == 'default' ? 200 : int.parse(code);
+      } else {
+        code as int;
+      }
+      return MapEntry(code, ResponseOpenApi.fromJson(response as Map));
     });
   }
 }

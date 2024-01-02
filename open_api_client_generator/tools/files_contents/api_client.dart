@@ -66,7 +66,7 @@ class ApiClientResponse {
   });
 }
 
-class ApiClientException {
+class ApiClientException implements Exception {
   final ApiClientResponse response;
 
   const ApiClientException({
