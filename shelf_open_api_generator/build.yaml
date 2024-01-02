@@ -5,10 +5,6 @@ targets:
         enabled: false
       shelf_open_api_generator:shelf_routing:
         enabled: false
-      shelf_open_api_generator:x:
-        generate_for:
-          - lib/x2.dart
-          - $package$
 
       json_serializable:
         generate_for:

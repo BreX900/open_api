@@ -5,12 +5,12 @@ import 'package:meta/meta_meta.dart';
 
 @TargetKind.method
 class OpenApiRoute {
-  final Map<String, List<String>> security;
+  final List<Map<String, List<String>>> security;
   final Type? requestQuery;
   final Type? requestBody;
 
   const OpenApiRoute({
-    this.security = const {},
+    this.security = const <Map<String, List<String>>>[],
     this.requestQuery,
     this.requestBody,
   });

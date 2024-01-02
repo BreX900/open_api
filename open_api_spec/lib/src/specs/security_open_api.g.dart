@@ -121,7 +121,7 @@ OAuthFlowOpenApi _$OAuthFlowOpenApiFromJson(Map json) => $checkedCreate(
       ($checkedConvert) {
         final val = OAuthFlowOpenApi(
           authorizationUrl:
-              $checkedConvert('authorizationUrl', (v) => v as String),
+              $checkedConvert('authorizationUrl', (v) => v as String?),
           tokenUrl: $checkedConvert('tokenUrl', (v) => v as String),
           refreshUrl: $checkedConvert('refreshUrl', (v) => v as String?),
           scopes: $checkedConvert(
@@ -132,10 +132,7 @@ OAuthFlowOpenApi _$OAuthFlowOpenApiFromJson(Map json) => $checkedCreate(
     );
 
 Map<String, dynamic> _$OAuthFlowOpenApiToJson(OAuthFlowOpenApi instance) {
-  final val = <String, dynamic>{
-    'authorizationUrl': instance.authorizationUrl,
-    'tokenUrl': instance.tokenUrl,
-  };
+  final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -143,6 +140,8 @@ Map<String, dynamic> _$OAuthFlowOpenApiToJson(OAuthFlowOpenApi instance) {
     }
   }
 
+  writeNotNull('authorizationUrl', instance.authorizationUrl);
+  val['tokenUrl'] = instance.tokenUrl;
   writeNotNull('refreshUrl', instance.refreshUrl);
   val['scopes'] = instance.scopes;
   return val;

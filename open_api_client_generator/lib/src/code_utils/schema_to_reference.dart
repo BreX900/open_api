@@ -3,21 +3,25 @@ import 'package:open_api_client_generator/src/code_utils/reference_utils.dart';
 import 'package:open_api_client_generator/src/options/context.dart';
 import 'package:open_api_specification/open_api_spec.dart';
 
-extension SchemaToType on ContextMixin {
-  Reference schemaToType(SchemaOpenApi schema, {Reference? target}) {
+extension SchemaToRef on ContextMixin {
+  Reference ref(SchemaOpenApi schema) {
+    if (schema.isEnum) return Reference(codecs.encodeType(schema.name!));
+
     switch (schema.format) {
       case FormatOpenApi.int32:
       case FormatOpenApi.int64:
-        return target ?? References.int;
+        return References.int;
       case FormatOpenApi.float:
       case FormatOpenApi.double:
-        return target ?? References.double;
+        return References.double;
+      case FormatOpenApi.string:
+        return References.string;
       case FormatOpenApi.date:
       case FormatOpenApi.dateTime:
-        return target ?? References.dateTime;
+        return References.dateTime;
       case FormatOpenApi.uuid:
       case FormatOpenApi.email:
-        return target ?? References.string;
+        return References.string;
 
       case FormatOpenApi.url:
       case FormatOpenApi.uri:
@@ -32,22 +36,21 @@ extension SchemaToType on ContextMixin {
 
     switch (schema.type) {
       case TypeOpenApi.boolean:
-        return target ?? References.bool;
+        return References.bool;
       case TypeOpenApi.integer:
-        return target ?? References.int;
+        return References.int;
       case TypeOpenApi.number:
-        return target ?? References.num;
+        return References.num;
       case TypeOpenApi.string:
-        return target ?? References.string;
+        return References.string;
       case TypeOpenApi.array:
-        return References.list(schemaToType(schema.items!));
+        return References.list(ref(schema.items!));
       case TypeOpenApi.object:
-        if (schema.title != null) return Reference(schema.title!);
+        if (schema.name != null) return Reference(codecs.encodeType(schema.name!));
 
-        final additionalProperties = schema.additionalProperties;
         return References.map(
           key: References.string,
-          value: additionalProperties != null ? schemaToType(additionalProperties) : null,
+          value: schema.additionalProperties != null ? ref(schema.additionalProperties!) : null,
         );
       case null:
         return References.jsonValue;

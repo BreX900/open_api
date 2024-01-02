@@ -1,5 +1,7 @@
 abstract final class FilesContents {
   static const String webApiClient = r'''
+// ignore_for_file: always_use_package_imports
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
@@ -48,6 +50,8 @@ class WebApiClient extends ApiClient implements DartApiClient {
 
 ''';
   static const String ioApiClient = '''
+// ignore_for_file: always_use_package_imports
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -85,6 +89,8 @@ class IoApiClient extends ApiClient implements DartApiClient {
 
 ''';
   static const String httpApiClient = '''
+// ignore_for_file: always_use_package_imports
+
 import 'dart:convert';
 
 import 'package:http/http.dart';
@@ -180,7 +186,7 @@ class ApiClientResponse {
   });
 }
 
-class ApiClientException {
+class ApiClientException implements Exception {
   final ApiClientResponse response;
 
   const ApiClientException({
@@ -193,6 +199,8 @@ class ApiClientException {
 
 ''';
   static const String dartApiClient = '''
+// ignore_for_file: always_use_package_imports
+
 import 'api_client.dart';
 import 'io_api_client.dart' if (dart.html) 'web_api_client.dart';
 

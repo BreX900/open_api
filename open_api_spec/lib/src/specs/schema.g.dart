@@ -93,13 +93,16 @@ SchemaOpenApi _$SchemaOpenApiFromJson(Map json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = SchemaOpenApi(
+          name: $checkedConvert('name', (v) => v as String?),
           title: $checkedConvert('title', (v) => v as String?),
           description: $checkedConvert('description', (v) => v as String?),
           example: $checkedConvert('example', (v) => v),
           type: $checkedConvert(
               'type', (v) => $enumDecodeNullable(_$TypeOpenApiEnumMap, v)),
           format: $checkedConvert(
-              'format', (v) => $enumDecodeNullable(_$FormatOpenApiEnumMap, v)),
+              'format',
+              (v) => $enumDecodeNullable(_$FormatOpenApiEnumMap, v,
+                  unknownValue: JsonKey.nullForUndefinedEnumValue)),
           enum$: $checkedConvert('enum',
               (v) => (v as List<dynamic>?)?.map((e) => e as Object).toList()),
           items: $checkedConvert('items',
@@ -138,11 +141,12 @@ Map<String, dynamic> _$SchemaOpenApiToJson(SchemaOpenApi instance) {
     }
   }
 
+  writeNotNull('name', instance.name);
   writeNotNull('title', instance.title);
   writeNotNull('description', instance.description);
   writeNotNull('example', instance.example);
   writeNotNull('type', _$TypeOpenApiEnumMap[instance.type]);
-  writeNotNull('format', instance.format?.toJson());
+  writeNotNull('format', _$FormatOpenApiEnumMap[instance.format]);
   writeNotNull('enum', instance.enum$);
   writeNotNull('items', instance.items?.toJson());
   writeNotNull('properties',
@@ -171,6 +175,7 @@ const _$FormatOpenApiEnumMap = {
   FormatOpenApi.int64: 'int64',
   FormatOpenApi.double: 'double',
   FormatOpenApi.float: 'float',
+  FormatOpenApi.string: 'string',
   FormatOpenApi.date: 'date',
   FormatOpenApi.dateTime: 'date-time',
   FormatOpenApi.uuid: 'uuid',

@@ -93,13 +93,13 @@ class OAuthFlowsOpenApi {
 /// Version: 3.0.3
 @SpecsSerializable()
 class OAuthFlowOpenApi {
-  final String authorizationUrl;
+  final String? authorizationUrl;
   final String tokenUrl;
   final String? refreshUrl;
   final Map<String, String> scopes;
 
   const OAuthFlowOpenApi({
-    required this.authorizationUrl,
+    this.authorizationUrl,
     required this.tokenUrl,
     this.refreshUrl,
     required this.scopes,

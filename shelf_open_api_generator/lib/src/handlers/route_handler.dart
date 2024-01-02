@@ -15,7 +15,7 @@ class RouteHandler {
   final SchemasRegistry schemasRegistry;
   final String path;
   final String method;
-  final Map<String, List<String>> security;
+  final List<Map<String, List<String>>> security;
   final DartType? requestQuery;
   final DartType? requestBody;
 

@@ -7,7 +7,7 @@ environment:
 
 scripts:
   # To generate .g files:
-  build:runner: dart run build_runner watch --delete-conflicting-outputs --verbose
+  runner:watch: dart run build_runner watch --delete-conflicting-outputs --verbose
 
 dependencies:
   shelf: ^1.4.0
@@ -15,8 +15,7 @@ dependencies:
   shelf_static: ^1.1.1
   shelf_swagger_ui: ^1.0.0+2
 
-  shelf_open_api:
-    path: ../shelf_open_api
+  shelf_open_api: ^1.1.0
 
   mek_data_class: ^1.0.1
   json_annotation: ^4.8.0
@@ -28,13 +27,12 @@ dev_dependencies:
   mek_data_class_generator: ^1.1.1
   json_serializable: ^6.6.1
   shelf_router_generator: ^1.0.5
-  shelf_open_api_generator:
-    path: ../shelf_open_api_generator
+  shelf_open_api_generator: ^2.0.0
 
-dependency_overrides:
-  open_api_specification:
-    path: ../open_api_spec
-  shelf_open_api:
-    path: ../shelf_open_api
-  shelf_open_api_generator:
-    path: ../shelf_open_api_generator
+#dependency_overrides:
+#  open_api_specification:
+#    path: ../open_api_spec
+#  shelf_open_api:
+#    path: ../shelf_open_api
+#  shelf_open_api_generator:
+#    path: ../shelf_open_api_generator

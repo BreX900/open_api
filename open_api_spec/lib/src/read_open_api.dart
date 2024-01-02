@@ -85,7 +85,7 @@ Future<Map<dynamic, dynamic>> readRef(
     for (final segment in segments) {
       data = data[segment] as Map<dynamic, dynamic>;
     }
-    if (!data.containsKey('title')) data = {'title': segments.last, ...data};
+    if (!data.containsKey('name')) data = {'name': segments.last, ...data};
   }
 
   final resolvedData = await _resolveDocumentRefs(uri, document, data, cache: cache);

@@ -13,7 +13,7 @@ class DartCollectionCodec extends CollectionCodec {
 
   @override
   String encodeToCore(Reference type) {
-    if (type.isList) return '.toList()';
+    // if (type.isList) return '.toList()';
     return '';
   }
 }
