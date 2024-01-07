@@ -6,28 +6,39 @@ import 'package:source_gen/source_gen.dart';
 class RouteGroupHandler {
   static const _checker = TypeChecker.fromRuntime(RouteGroup);
 
+  final String? name;
   final String? prefix;
   final ClassElement element;
   final List<RouteHandler> routes;
 
-  const RouteGroupHandler({
-    required this.prefix,
-    required this.element,
-    required this.routes,
-  });
-
   static RouteGroupHandler? from(ClassElement element) {
-    final routes = element.methods.map(RouteHandler.from).nonNulls.toList();
-    if (routes.isEmpty) return null;
-
     final annotation = ConstantReader(_checker.firstAnnotationOf(element));
+    final name = annotation.peek('name')?.stringValue;
+    final prefix = annotation.peek('prefix')?.stringValue;
 
-    return RouteGroupHandler(
-      prefix: annotation.peek('path')?.stringValue,
+    final routes = element.methods.map(RouteHandler.from).nonNulls.toList();
+
+    if (name == null && routes.isEmpty) return null;
+
+    if (prefix != null && !RegExp(r'^\/.*[^/]$').hasMatch(prefix)) {
+      throw InvalidGenerationSourceError('"prefix" field must begin and not end with "/".',
+          element: element);
+    }
+
+    return RouteGroupHandler._(
+      name: name,
+      prefix: prefix,
       element: element,
       routes: routes,
     );
   }
+
+  RouteGroupHandler._({
+    required this.name,
+    required this.prefix,
+    required this.element,
+    required this.routes,
+  });
 
   // TODO: Support getters
   // return <ExecutableElement>[

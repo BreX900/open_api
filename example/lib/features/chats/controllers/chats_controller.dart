@@ -1,4 +1,5 @@
 import 'package:example/features/chats/dto/chat_create_dto.dart';
+import 'package:example/shared/api_route_group.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_open_api/shelf_open_api.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -6,24 +7,24 @@ import 'package:shelf_routing/shelf_routing.dart';
 
 part 'chats_controller.g.dart';
 
-@RouteGroup('/v1')
+@ApiRouteGroup(prefix: '/chats')
 class ChatsController {
   static Router get router => _$ChatsControllerRouter;
 
   const ChatsController();
 
-  @Route.post('/chats')
+  @Route.get('/')
   @OpenApiRoute(requestBody: ChatCreateDto)
   Future<JsonResponse<void>> createChatForReport(Request request) async {
     // ...
 
-    return JsonResponse.ok(null);
+    return JsonResponse.ok('/');
   }
 
-  @Route.get('/chats/<chatId>')
+  @Route.get('/<chatId>')
   Future<JsonResponse<void>> fetchChat(Request request, int chatId) async {
     // ...
 
-    return JsonResponse.ok(null);
+    return JsonResponse.ok('/<chatId>');
   }
 }

@@ -3,7 +3,7 @@ library shelf_routing;
 import 'package:meta/meta_meta.dart';
 
 export 'package:shelf_router/shelf_router.dart' hide Route;
-export 'package:shelf_routing/src/getter.dart';
+export 'package:shelf_routing/src/get_request_extension.dart';
 export 'package:shelf_routing/src/json_response.dart';
 export 'package:shelf_routing/src/route.dart';
 export 'package:shelf_routing/src/utils.dart';

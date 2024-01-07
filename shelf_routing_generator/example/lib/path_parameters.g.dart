@@ -7,27 +7,24 @@ part of 'path_parameters.dart';
 // **************************************************************************
 
 Router get _$PathParametersControllerRouter => Router()
-  ..add('GET', r'/path-parameters/<intParameter>',
-      (Request request, String intParameter) async {
+  ..add('GET', r'/<integer>', (Request request, String integer) async {
     final $ = request.get<PathParametersController>();
     return await $.fetchMessages(
       request,
-      int.parse(intParameter),
+      int.parse(integer),
     );
   })
-  ..add('POST', r'/path-parameters/<stringParameter>',
-      (Request request, String stringParameter) async {
+  ..add('POST', r'/<string>', (Request request, String string) async {
     final $ = request.get<PathParametersController>();
     return await $.createMessage(
       request,
-      stringParameter,
+      string,
     );
   })
-  ..add('PUT', r'/path-parameters/<decimalParameter>',
-      (Request request, String decimalParameter) async {
+  ..add('PUT', r'/<decimal>', (Request request, String decimal) async {
     final $ = request.get<PathParametersController>();
     return await $.updateMessage(
       request,
-      int.parse(decimalParameter),
+      Decimal.parse(decimal),
     );
   });

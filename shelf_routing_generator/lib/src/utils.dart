@@ -16,12 +16,6 @@ bool isHandlerAssignableFromType(DartType type) {
 
   if (type is! FunctionType) return false;
 
-  // final returnsChecker = TypeChecker.any([
-  //   responseChecker,
-  //   TypeChecker.fromRuntime(FutureOr<Response>),
-  //   TypeChecker.fromRuntime(Future<Response>),
-  // ]);
-
   var returnType = type.returnType;
   returnType = returnType.isDartAsyncFuture || returnType.isDartAsyncFutureOr
       ? (returnType as InterfaceType).typeArguments.single
@@ -34,22 +28,10 @@ bool isHandlerAssignableFromType(DartType type) {
   return true;
 }
 
-class InvalidCodeException implements Exception {
-  final String message;
-
-  InvalidCodeException(this.message);
-
-  factory InvalidCodeException.from(Element element, String description) {
-    final enclosingElement = element.enclosingElement;
-    var displayName = element.displayName;
-    if (enclosingElement != null && enclosingElement is InterfaceElement) {
-      displayName = '${enclosingElement.displayName}.$displayName';
-    }
-    return InvalidCodeException('On $displayName ${element.kind.displayName}: $description');
-  }
-
-  @override
-  String toString() => message;
+void ensureIsValidRoute(String? route, {required String name, Element? element}) {
+  if (route == null || RegExp(r'^\/.+[^/]$').hasMatch(route)) return;
+  throw InvalidGenerationSourceError('"$name" field must begin and not end with "/". ',
+      element: element);
 }
 
 extension JsonType on DartType {

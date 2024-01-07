@@ -12,15 +12,13 @@ scripts:
 dependencies:
   shelf: ^1.4.1
   shelf_router: ^1.1.4
-  shelf_routing: { path: ../shelf_routing }
+  shelf_routing: { path: ../../shelf_routing }
   shelf_static: ^1.1.2
   shelf_swagger_ui: ^1.0.0+2
-  shelf_hotreload: ^1.4.0
-
-  shelf_open_api: ^1.1.0
 
   mek_data_class: ^1.4.0
   json_annotation: ^4.8.1
+
   decimal: ^2.3.3
 
 dev_dependencies:
@@ -29,13 +27,4 @@ dev_dependencies:
   build_runner: ^2.4.7
   mek_data_class_generator: ^1.5.1
   json_serializable: ^6.7.1
-  shelf_routing_generator: { path: ../shelf_routing_generator }
-  shelf_open_api_generator: ^2.0.0
-
-dependency_overrides:
-  open_api_specification:
-    path: ../open_api_spec
-  shelf_open_api:
-    path: ../shelf_open_api
-  shelf_open_api_generator:
-    path: ../shelf_open_api_generator
+  shelf_routing_generator: { path: .. }

@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf_routing_generator/src/route_header_handler.dart';
 import 'package:shelf_routing_generator/src/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -16,7 +17,8 @@ class RouteHandler {
   final ParameterElement? bodyParameter;
   final bool hasRequest;
   final List<ParameterElement> pathParameters;
-  final List<ParameterElement> headerParameters;
+  final List<RouteHeaderHandler> headers;
+  // final List<ParameterElement> headerParameters;
   final List<ParameterElement> queryParameters;
   final RouteReturnsType returns;
 
@@ -27,12 +29,10 @@ class RouteHandler {
     required this.bodyParameter,
     required this.hasRequest,
     required this.pathParameters,
-    required this.headerParameters,
+    required this.headers,
     required this.queryParameters,
     required this.returns,
-  }) {
-    _validate();
-  }
+  });
 
   static RouteHandler? from(MethodElement element) {
     final annotation = ConstantReader(_checker.firstAnnotationOf(element));
@@ -40,57 +40,52 @@ class RouteHandler {
 
     final verb = annotation.read('verb').stringValue;
     final route = annotation.read('route').stringValue;
-
-    print(_checker.firstAnnotationOf(element));
-    print(_checker.firstAnnotationOf(element)?.type);
-    print(element.metadata.map((e) => (e.element as ConstructorElement).isSynthetic).toList());
-
-    // final headers = RouteHeaderHandler.from(element);
+    if (!RegExp(r'^\/.*').hasMatch(route)) {
+      throw InvalidGenerationSourceError('"route" field must begin with "/".', element: element);
+    }
 
     final pathParams = RegExp(r'\/<(\w+)>').allMatches(route).map((e) => e.group(1)!).toList();
-
-    ParameterElement? bodyParameter;
-    final pathParameters = <ParameterElement>[];
-
     final parametersIterator = element.parameters.where((e) => e.isPositional).iterator;
 
     if (!parametersIterator.moveNext() ||
         !requestChecker.isAssignableFromType(parametersIterator.current.type)) {
-      throw InvalidCodeException.from(element, 'need first parameter as "Request request".');
+      throw InvalidGenerationSourceError('need first parameter as "Request request".',
+          element: element);
     }
 
+    final pathParameters = <ParameterElement>[];
     for (final pathParam in pathParams) {
       if (!parametersIterator.moveNext()) {
-        throw InvalidCodeException.from(element, 'not has "$pathParam" path parameter.');
+        throw InvalidGenerationSourceError('not has "$pathParam" path parameter.',
+            element: element);
       }
       final parameter = parametersIterator.current;
 
       if (pathParam != parameter.name) {
-        throw InvalidCodeException.from(
-            parameter, 'has name different to path param "$pathParam".');
-      }
-      if (!parameter.type.isPrimitive || parameter.type.isNullable) {
-        throw InvalidCodeException.from(parameter, 'has unsupported type.');
+        throw InvalidGenerationSourceError('has name different to path param "$pathParam".',
+            element: parameter);
       }
       pathParameters.add(parameter);
     }
 
+    ParameterElement? bodyParameter;
     if (parametersIterator.moveNext()) {
       if (verb == 'GET') {
-        throw InvalidCodeException.from(element, '"GET" endpoint cannot have a body.');
+        throw InvalidGenerationSourceError('"GET" endpoint cannot have a body.', element: element);
       }
       final parameter = parametersIterator.current;
       final parameterElement = parameter.type.element! as ClassElement;
       final parameterTypeName = parameter.type.getDisplayString(withNullability: false);
       if (parameterElement.constructors.every((e) => e.name != 'fromJson')) {
-        throw InvalidCodeException.from(parameterElement,
-            'add "factory $parameterTypeName.fromJson(Map<String, dynamic> map)" constructor.');
+        throw InvalidGenerationSourceError(
+            'add "factory $parameterTypeName.fromJson(Map<String, dynamic> map)" constructor.',
+            element: parameterElement);
       }
       bodyParameter = parameter;
     }
 
     if (parametersIterator.moveNext()) {
-      throw InvalidCodeException.from(element, 'has many parameters.');
+      throw InvalidGenerationSourceError('has many parameters.', element: element);
     }
 
     // final headerParameters =
@@ -104,13 +99,13 @@ class RouteHandler {
       bodyParameter: bodyParameter,
       hasRequest: true,
       pathParameters: pathParameters,
-      headerParameters: [],
+      headers: RouteHeaderHandler.from(element),
       queryParameters: queryParameters,
-      returns: getReturns(element.returnType),
+      returns: _parseReturnsType(element.returnType),
     );
   }
 
-  static RouteReturnsType getReturns(DartType type) {
+  static RouteReturnsType _parseReturnsType(DartType type) {
     final returnType = type.isDartAsyncFuture || type.isDartAsyncFuture
         ? (type as InterfaceType).typeArguments.single
         : type;
@@ -123,34 +118,14 @@ class RouteHandler {
     if (returnElement is ClassElement) {
       if (responseChecker.isAssignableFromType(returnType)) return RouteReturnsType.response;
       if (returnElement.methods.every((element) => element.name != 'toJson')) {
-        throw InvalidCodeException(
+        throw InvalidGenerationSourceError(
             'Please implement "Map<String, dynamic> ${returnElement.name}.toJson()" method.');
       }
       return RouteReturnsType.json;
     }
 
     final typeName = type.getDisplayString(withNullability: false);
-    throw InvalidCodeException('Please update $typeName with valid returns json value.');
-  }
-
-  void _validate() {
-    for (final parameter in headerParameters) {
-      final type = parameter.type;
-      if (type.isPrimitive) continue;
-
-      final listType = type.asDartCoreList;
-      if (listType?.typeArguments.single.isPrimitive ?? false) continue;
-
-      throw InvalidCodeException.from(parameter, 'has unsupported type.');
-    }
-    for (final parameter in queryParameters) {
-      final type = parameter.type;
-      if (type.isPrimitive) continue;
-
-      final listType = type.asDartCoreList;
-      if (listType?.typeArguments.single.isPrimitive ?? false) continue;
-
-      throw InvalidCodeException.from(parameter, 'has unsupported type.');
-    }
+    throw InvalidGenerationSourceError('Please update $typeName with valid returns json value.',
+        element: type.element);
   }
 }

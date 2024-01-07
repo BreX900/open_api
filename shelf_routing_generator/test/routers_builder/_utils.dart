@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
-import 'package:shelf_routing_generator/run_router_builder.dart';
+import 'package:shelf_routing_generator/run_routers_builder.dart';
 
 Future<RouterBuilderAssets> testRouterBuilder({
   required String source,
@@ -11,18 +11,17 @@ Future<RouterBuilderAssets> testRouterBuilder({
   final writer = InMemoryAssetWriter();
 
   await testBuilder(
-    // SimpleBuilder(RouterGenerator()),
-    runRouterBuilder(BuilderOptions.empty),
+    runRoutersBuilder(BuilderOptions.empty),
     {'$package|example.dart': source},
     reader: await PackageAssetReader.currentIsolate(),
     writer: writer,
   );
 
   final files = writer.assets.map((key, value) => MapEntry(key, utf8.decode(value)));
-  print(files);
+  // print(files);
   return RouterBuilderAssets(
-    routing: jsonDecode(files[AssetId(package, 'example.routing.json')]!),
-    routers: files[AssetId(package, 'example.router.g.part')]!
+    schema: jsonDecode(files[AssetId(package, 'example.routers_groups.json')] ?? 'null'),
+    routers: files[AssetId(package, 'example.routers.g.part')]!
         .replaceAll(RegExp(r'//[^\n]*\n'), '')
         .split('\n')
         .where((e) => e.isNotEmpty)
@@ -31,11 +30,11 @@ Future<RouterBuilderAssets> testRouterBuilder({
 }
 
 class RouterBuilderAssets {
-  final Map<String, dynamic> routing;
+  final Map<String, dynamic>? schema;
   final String routers;
 
   const RouterBuilderAssets({
-    required this.routing,
+    required this.schema,
     required this.routers,
   });
 }
