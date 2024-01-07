@@ -5,28 +5,61 @@ info:
 servers:
   - url: "http://localhost:8080"
 paths:
-  /v1/messages:
+  /<intParameter>:
     get:
       tags:
-        - MessagesController
+        - PathParametersController
       summary: fetchMessages
       operationId: fetchMessages
       parameters:
-        - name: chatId
-          in: query
+        - name: intParameter
+          in: path
           required: true
           schema:
             type: string
       responses:
         200:
           description: "Operation completed!"
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/MessageDto"
-  /v1/chats:
+  /<stringParameter>:
+    post:
+      tags:
+        - PathParametersController
+      summary: createMessage
+      operationId: createMessage
+      parameters:
+        - name: stringParameter
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Operation completed!"
+  /<decimalParameter>:
+    put:
+      tags:
+        - PathParametersController
+      summary: updateMessage
+      operationId: updateMessage
+      parameters:
+        - name: decimalParameter
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Operation completed!"
+  /messages:
+    get:
+      tags:
+        - QueryParametersController
+      summary: fetchMessages
+      operationId: fetchMessages
+      responses:
+        200:
+          description: "Operation completed!"
+  /chats:
     post:
       tags:
         - ChatsController
@@ -41,19 +74,23 @@ paths:
       responses:
         200:
           description: "Operation completed!"
+  /chats/<chatId>:
+    get:
+      tags:
+        - ChatsController
+      summary: fetchChat
+      operationId: fetchChat
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Operation completed!"
 components:
   schemas:
-    MessageDto:
-      title: MessageDto
-      type: object
-      properties:
-        chatId:
-          type: string
-        content:
-          type: string
-      required:
-        - chatId
-        - content
     ChatCreateDto:
       title: ChatCreateDto
       type: object
@@ -63,5 +100,7 @@ components:
       required:
         - title
 tags:
+  - name: PathParametersController
   - name: MessagesController
+  - name: QueryParametersController
   - name: ChatsController

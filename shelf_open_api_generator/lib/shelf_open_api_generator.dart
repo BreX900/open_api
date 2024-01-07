@@ -5,7 +5,6 @@ import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:open_api_specification/open_api.dart';
 import 'package:shelf_open_api/shelf_open_api.dart';
-import 'package:shelf_open_api/shelf_routing.dart';
 import 'package:shelf_open_api_generator/src/config.dart';
 import 'package:shelf_open_api_generator/src/handlers/route_handler.dart';
 import 'package:shelf_open_api_generator/src/handlers/routes_handler.dart';
@@ -14,6 +13,7 @@ import 'package:shelf_open_api_generator/src/utils/annotations_utils.dart';
 import 'package:shelf_open_api_generator/src/utils/utils.dart';
 import 'package:shelf_open_api_generator/src/utils/yaml_encoder.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf_routing/shelf_routing.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -32,7 +32,7 @@ Builder buildOpenApi(BuilderOptions options) {
 // https://github.com/dart-lang/build/blob/master/docs/writing_an_aggregate_builder.md
 class OpenApiBuilder implements Builder {
   // static final _openApiType = TypeChecker.fromRuntime(OpenApiConfig);
-  static final _routesType = TypeChecker.fromRuntime(Routes);
+  static final _routeGroupType = TypeChecker.fromRuntime(RouteGroup);
   static final _routeType = TypeChecker.fromRuntime(Route);
   static final _openApiRouteType = TypeChecker.fromRuntime(OpenApiRoute);
 
@@ -67,12 +67,12 @@ class OpenApiBuilder implements Builder {
     }).toList();
 
     final routes = elements.expand((executableElement) {
-      final routesAnnotation =
-          ConstantReader(_routesType.firstAnnotationOf(executableElement.enclosingElement));
+      final routeGroupAnnotation =
+          ConstantReader(_routeGroupType.firstAnnotationOf(executableElement.enclosingElement));
       final openApiAnnotation =
           ConstantReader(_openApiRouteType.firstAnnotationOfExact(executableElement));
 
-      final routePrefix = routesAnnotation.peek('prefix')?.stringValue ?? '';
+      final routePrefix = routeGroupAnnotation.peek('prefix')?.stringValue ?? '';
 
       return _routeType
           .annotationsOfExact(executableElement)

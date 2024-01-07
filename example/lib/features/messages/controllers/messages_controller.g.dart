@@ -3,15 +3,13 @@
 part of 'messages_controller.dart';
 
 // **************************************************************************
-// ShelfRouterGenerator
+// RouterGenerator
 // **************************************************************************
 
-Router _$MessagesControllerRouter(MessagesController service) {
-  final router = Router();
-  router.add(
-    'GET',
-    r'/messages',
-    service.fetchMessages,
-  );
-  return router;
-}
+Router get _$MessagesControllerRouter => Router()
+  ..add('GET', r'/v1/messages', (Request request) async {
+    final $ = request.get<MessagesController>();
+    return await $.fetchMessages(
+      request,
+    );
+  });

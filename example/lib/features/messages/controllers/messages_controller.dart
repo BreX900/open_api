@@ -1,24 +1,23 @@
 import 'package:example/features/messages/dto/message_dto.dart';
 import 'package:example/features/messages/dto/message_fetch_dto.dart';
-import 'package:example/shared/json_response.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_open_api/shelf_open_api.dart';
-import 'package:shelf_open_api/shelf_routing.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf_routing/shelf_routing.dart';
 
 part 'messages_controller.g.dart';
 
-@Routes(prefix: '/v1')
+@RouteGroup('/v1')
 class MessagesController {
-  const MessagesController();
+  static Router get router => _$MessagesControllerRouter;
 
-  Router get router => _$MessagesControllerRouter(this);
+  const MessagesController();
 
   @Route.get('/messages')
   @OpenApiRoute(requestQuery: MessageFetchDto)
   Future<JsonResponse<List<MessageDto>>> fetchMessages(Request request) async {
     // ...
 
-    return JsonResponse.ok();
+    return JsonResponse.ok(null);
   }
 }

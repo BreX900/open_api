@@ -3,18 +3,14 @@ import 'dart:io';
 import 'package:example/main.routing.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
-import 'package:shelf_open_api/shelf_routing.dart';
-import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf_routing/shelf_routing.dart';
 import 'package:shelf_static/shelf_static.dart';
 import 'package:shelf_swagger_ui/shelf_swagger_ui.dart';
 
-@Routing(
-  varName: 'controllersRouter',
-  generateFor: ['**/*_controller.dart'],
-)
+@GenerateRouterForGroup()
 void main() async {
   final rootRouter = Router()
-    ..mount('/', $controllersRouter)
+    ..mount('/', $mainRouter)
     ..mount('/swagger', SwaggerUI('public/example.open_api.yaml', title: 'Swagger Example Api'))
     ..mount('/', createStaticHandler('public'));
 

@@ -1,0 +1,27 @@
+name: shelf_routing_generator
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.2.3
+
+dependencies:
+  shelf: ^1.4.1
+  shelf_router: ^1.1.4
+  shelf_routing: { path: ../shelf_routing }
+
+  build: ^2.4.1
+  source_gen: ^1.5.0
+  analyzer: ^6.3.0
+  dart_style: ^2.3.4
+#  code_builder: ^4.9.0
+
+  collection: ^1.18.0
+  recase: ^4.1.0
+  glob: ^2.1.2
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.25.0
+  build_test: ^2.2.2

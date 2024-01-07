@@ -16,6 +16,7 @@ dependencies:
   open_api_specification: ^1.0.0
   shelf: ^1.4.0
   shelf_router: ^1.1.3
+  shelf_routing: { path: ../shelf_routing }
   shelf_open_api: ^1.0.0
 
   collection: ^1.17.1
@@ -25,11 +26,10 @@ dependencies:
   analyzer: '>=5.12.0 <7.0.0'
   build: ^2.3.1
 
+  shelf_routing_generator: { path: ../shelf_routing_generator }
+
   # OPEN API
   json_annotation: ^4.8.0
-
-  # ROUTING
-  source_gen: ^1.2.7
 
 dev_dependencies:
   mek_lints: ^2.0.0
