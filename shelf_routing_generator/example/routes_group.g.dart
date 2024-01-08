@@ -1,21 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'responses.dart';
+part of 'routes_group.dart';
 
 // **************************************************************************
 // RouterGenerator
 // **************************************************************************
 
-Router get _$responsesControllerRouter => Router()
+Router get _$routesGroupControllerRouter => Router()
   ..add('GET', r' /', (Request request) async {
-    final $ = request.get<ResponsesController>();
+    final $ = request.get<RoutesGroupController>();
     return $.sync(
       request,
     );
-  })
-  ..add('POST', r' /', (Request request) async {
-    final $ = request.get<ResponsesController>();
-    return await $.async(
+  });
+Router get _$routesGroupWithPrefixControllerRouter => Router()
+  ..add('GET', r' /', (Request request) async {
+    final $ = request.get<RoutesGroupWithPrefixController>();
+    return $.sync(
       request,
     );
   });

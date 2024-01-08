@@ -6,24 +6,24 @@ part of 'path_parameters.dart';
 // RouterGenerator
 // **************************************************************************
 
-Router get _$PathParametersControllerRouter => Router()
-  ..add('GET', r'/<integer>', (Request request, String integer) async {
+Router get _$pathParametersControllerRouter => Router()
+  ..add('GET', r' /<integer>', (Request request, String integer) async {
     final $ = request.get<PathParametersController>();
-    return await $.fetchMessages(
+    return $.fetchMessages(
       request,
       int.parse(integer),
     );
   })
-  ..add('POST', r'/<string>', (Request request, String string) async {
+  ..add('POST', r' /<string>', (Request request, String string) async {
     final $ = request.get<PathParametersController>();
-    return await $.createMessage(
+    return $.createMessage(
       request,
       string,
     );
   })
-  ..add('PUT', r'/<decimal>', (Request request, String decimal) async {
+  ..add('PUT', r' /<decimal>', (Request request, String decimal) async {
     final $ = request.get<PathParametersController>();
-    return await $.updateMessage(
+    return $.updateMessage(
       request,
       Decimal.parse(decimal),
     );

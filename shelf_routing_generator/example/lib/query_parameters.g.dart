@@ -6,10 +6,10 @@ part of 'query_parameters.dart';
 // RouterGenerator
 // **************************************************************************
 
-Router get _$QueryParametersControllerRouter => Router()
-  ..add('GET', r'/single', (Request request) async {
+Router get _$queryParametersControllerRouter => Router()
+  ..add('GET', r' /single', (Request request) async {
     final $ = request.get<QueryParametersController>();
-    return await $.single(
+    return $.single(
       request,
       integer: $parseQueryParameters(
           request, 'integer', (vls) => int.parse(vls.single)),
@@ -22,9 +22,9 @@ Router get _$QueryParametersControllerRouter => Router()
           (vls) => vls.isNotEmpty ? DateTime.parse(vls.single) : null),
     );
   })
-  ..add('GET', r'/list', (Request request) async {
+  ..add('GET', r' /list', (Request request) async {
     final $ = request.get<QueryParametersController>();
-    return await $.list(
+    return $.list(
       request,
       stringList: $parseQueryParameters(request, 'string-list', (vls) => vls),
       integerList: $parseQueryParameters(

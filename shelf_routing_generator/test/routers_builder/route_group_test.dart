@@ -52,25 +52,4 @@ class Controller {
 
     expect(assets.schema, null);
   });
-
-//   test('not generate a schema because annotation not has a name', () async {
-//     final source = r'''
-// import 'package:shelf/shelf.dart';
-// import 'package:shelf_router/shelf_router.dart';
-// import 'package:shelf_routing/shelf_routing.dart';
-//
-// part 'example.g.dart';
-//
-// @RouteGroup(prefix: '/example')
-// class Controller {
-//   static Router get router => _$ControllerRouter;
-//
-//   @Route.get('/get')
-//   Response get(Request request) => throw UnimplementedError();
-// }''';
-//
-//     final assets = await testRouterBuilder(source: source);
-//
-//     expect(assets.schema, null);
-//   });
 }
