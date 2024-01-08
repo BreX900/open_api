@@ -78,7 +78,7 @@ class RouterGenerator extends Generator {
       :returns,
     ) = _;
 
-    final routePath = '${group.name != null ? ' ' : (group.prefix ?? ' ')}$route';
+    final routePath = '${group.id != null ? ' ' : (group.prefix ?? ' ')}$route';
 
     final routeParams = [
       'Request request',
@@ -141,33 +141,29 @@ class RouterGenerator extends Generator {
 
     // Generate routing
 
-    final namedGroups = groups.groupListsBy((group) => group.name);
-
     final routingSchema = RoutersGroupsFileSchema(
       library: library.element.identifier,
-      groups: Map.fromEntries(namedGroups.entries.map((_) {
-        final MapEntry(key: name, value: groups) = _;
-        if (name == null) return null;
+      groups: groups.expand<RoutesGroupSchema>((group) sync* {
+        final groupId = group.id;
+        if (groupId == null) return;
 
-        final groupsSchemas = groups.map((group) {
-          final class$ = group.element;
-          final method = class$.fields.singleWhereOrNull((e) {
-            return e.isStatic && isHandlerAssignableFromType(e.type);
-          });
-          if (method == null) {
-            throw InvalidGenerationSource(
-              'Missing static router field.',
-              todo: 'Router get router => _\$${class$.name}Router',
-              element: group.element,
-            );
-          }
-          return RouterGroupSchema(
-            prefix: group.prefix ?? '/',
-            code: '${class$.name}.${method.name}',
+        final class$ = group.element;
+        final method = class$.fields.singleWhereOrNull((e) {
+          return e.isStatic && isHandlerAssignableFromType(e.type);
+        });
+        if (method == null) {
+          throw InvalidGenerationSource(
+            'Missing static router field.',
+            todo: 'Router get router => _\$${class$.name}Router',
+            element: group.element,
           );
-        }).toList();
-        return MapEntry(name, groupsSchemas);
-      }).nonNulls),
+        }
+        yield RoutesGroupSchema(
+          id: groupId,
+          prefix: group.prefix ?? '/',
+          code: '${class$.name}.${method.name}',
+        );
+      }).toList(),
     );
     if (routingSchema.groups.isNotEmpty) {
       final routingAsset = buildStep.allowedOutputs.skip(1).first;
@@ -180,7 +176,7 @@ class RouterGenerator extends Generator {
       final RouteGroupHandler(:element, :routes) = _;
       final routesCode = routes.map((route) => _codeAddRoute(_, route)).join();
       return '''
-Router get _\$${element.name}Router => Router()\n
+Router get _${codePublicVarName('${element.name}Router')} => Router()\n
   $routesCode;''';
     }).join('\n');
   }

@@ -6,7 +6,8 @@ Request createRequest({
   required Route route,
   Map<String, dynamic>? queryParameters,
 }) {
+  T getter<T extends Object>(Request request) => controller as T;
   return Request(route.verb, Uri.https('example.com', route.route, queryParameters), context: {
-    '_get': <T extends Object>() => controller as T,
+    '_getter': getter,
   });
 }

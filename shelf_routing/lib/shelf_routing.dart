@@ -2,27 +2,19 @@ library shelf_routing;
 
 import 'package:meta/meta_meta.dart';
 
-export 'package:shelf_router/shelf_router.dart' hide Route;
 export 'package:shelf_routing/src/get_request_extension.dart';
 export 'package:shelf_routing/src/json_response.dart';
 export 'package:shelf_routing/src/route.dart';
 export 'package:shelf_routing/src/utils.dart';
 
-@Target({TargetKind.function, TargetKind.topLevelVariable, TargetKind.classType})
-class GenerateRouterForGroup {
-  final String name;
-
-  const GenerateRouterForGroup(this.name);
-}
-
 @Target({TargetKind.classType})
-class RouteGroup {
-  final String? name;
+abstract class RoutesGroup {
   final String? prefix;
 
-  const RouteGroup({this.name, this.prefix});
+  const RoutesGroup({this.prefix});
 }
 
+@Target({TargetKind.method})
 class RouteHeader {
   final String name;
 

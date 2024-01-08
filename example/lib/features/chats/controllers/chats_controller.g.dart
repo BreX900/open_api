@@ -6,7 +6,7 @@ part of 'chats_controller.dart';
 // RouterGenerator
 // **************************************************************************
 
-Router get _$ChatsControllerRouter => Router()
+Router get _$chatsControllerRouter => Router()
   ..add('GET', r' /', (Request request) async {
     final $ = request.get<ChatsController>();
     return await $.createChatForReport(

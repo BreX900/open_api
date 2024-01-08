@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:recase/recase.dart';
 import 'package:shelf/shelf.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -46,6 +47,8 @@ extension JsonType on DartType {
   InterfaceType? get asDartCoreList => this is InterfaceType ? this as InterfaceType : null;
 }
 
-extension X on InterfaceType {
+extension InterfaceTypeExtensions on InterfaceType {
   DartType get typeArgument => typeArguments.single;
 }
+
+String codePublicVarName(String name) => '\$${name.camelCase}';

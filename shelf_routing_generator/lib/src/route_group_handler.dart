@@ -4,21 +4,21 @@ import 'package:shelf_routing_generator/src/route_handler.dart';
 import 'package:source_gen/source_gen.dart';
 
 class RouteGroupHandler {
-  static const _checker = TypeChecker.fromRuntime(RouteGroup);
+  static const _checker = TypeChecker.fromRuntime(RoutesGroup);
 
-  final String? name;
+  final int? id;
   final String? prefix;
   final ClassElement element;
   final List<RouteHandler> routes;
 
   static RouteGroupHandler? from(ClassElement element) {
     final annotation = ConstantReader(_checker.firstAnnotationOf(element));
-    final name = annotation.peek('name')?.stringValue;
+    final id = annotation.isNull ? null : annotation.objectValue.type!.element!.id;
     final prefix = annotation.peek('prefix')?.stringValue;
 
     final routes = element.methods.map(RouteHandler.from).nonNulls.toList();
 
-    if (name == null && routes.isEmpty) return null;
+    if (id == null && routes.isEmpty) return null;
 
     if (prefix != null && !RegExp(r'^\/.*[^/]$').hasMatch(prefix)) {
       throw InvalidGenerationSourceError('"prefix" field must begin and not end with "/".',
@@ -26,7 +26,7 @@ class RouteGroupHandler {
     }
 
     return RouteGroupHandler._(
-      name: name,
+      id: id,
       prefix: prefix,
       element: element,
       routes: routes,
@@ -34,7 +34,7 @@ class RouteGroupHandler {
   }
 
   RouteGroupHandler._({
-    required this.name,
+    required this.id,
     required this.prefix,
     required this.element,
     required this.routes,

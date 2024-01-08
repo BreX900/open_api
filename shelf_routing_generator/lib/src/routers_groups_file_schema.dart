@@ -2,7 +2,7 @@ class RoutersGroupsFileSchema {
   static const String extension = '.routers_groups.json';
 
   final String library;
-  final Map<String, List<RouterGroupSchema>> groups;
+  final List<RoutesGroupSchema> groups;
 
   const RoutersGroupsFileSchema({
     required this.library,
@@ -12,9 +12,7 @@ class RoutersGroupsFileSchema {
   factory RoutersGroupsFileSchema.fromJson(Map<String, dynamic> map) {
     return RoutersGroupsFileSchema(
       library: map['library'] as String,
-      groups: (map['groups'] as Map<String, dynamic>).map((name, groups) {
-        return MapEntry(name, (groups as List).map((e) => RouterGroupSchema.fromJson(e)).toList());
-      }),
+      groups: (map['groups'] as List<dynamic>).map((e) => RoutesGroupSchema.fromJson(e)).toList(),
     );
   }
 
@@ -26,17 +24,20 @@ class RoutersGroupsFileSchema {
   }
 }
 
-class RouterGroupSchema {
+class RoutesGroupSchema {
+  final int id;
   final String prefix;
   final String code;
 
-  const RouterGroupSchema({
+  const RoutesGroupSchema({
+    required this.id,
     required this.prefix,
     required this.code,
   });
 
-  factory RouterGroupSchema.fromJson(Map<String, dynamic> map) {
-    return RouterGroupSchema(
+  factory RoutesGroupSchema.fromJson(Map<String, dynamic> map) {
+    return RoutesGroupSchema(
+      id: map['id'] as int,
       prefix: map['prefix'] as String,
       code: map['code'] as String,
     );
@@ -44,6 +45,7 @@ class RouterGroupSchema {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'prefix': prefix,
       'code': code,
     };

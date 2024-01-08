@@ -1,24 +1,26 @@
 import 'package:shelf/shelf.dart';
 
-const _contextKey = '_get';
-
-typedef Get = T Function<T extends Object>(Request request);
+typedef RequestGetter = T Function<T extends Object>(Request request);
 
 extension ReadProviderRequest on Request {
+  static const String _key = '_getter';
+
   T get<T extends Object>() {
-    final getter = context[_contextKey] as Get?;
+    final getter = context[_key] as RequestGetter?;
 
     assert(getter != null,
         'Missing getter scope in request context.\nUse getterScope method to provider it.');
 
     return getter!<T>(this);
   }
+
+  Request changeWithGetter(RequestGetter getter) => change(context: {_key: getter});
 }
 
-Middleware getMiddleware(Get get) {
+Middleware getterMiddleware(RequestGetter getter) {
   return (innerHandler) {
     return (request) {
-      return innerHandler(request.change(context: {_contextKey: get}));
+      return innerHandler(request.changeWithGetter(getter));
     };
   };
 }

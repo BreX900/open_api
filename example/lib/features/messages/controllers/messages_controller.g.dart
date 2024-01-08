@@ -6,7 +6,7 @@ part of 'messages_controller.dart';
 // RouterGenerator
 // **************************************************************************
 
-Router get _$MessagesControllerRouter => Router()
+Router get _$messagesControllerRouter => Router()
   ..add('GET', r' /', (Request request) async {
     $ensureHasHeader(request, 'authorization');
     final $ = request.get<MessagesController>();

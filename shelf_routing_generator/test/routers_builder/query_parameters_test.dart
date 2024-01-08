@@ -24,7 +24,7 @@ void main() {
 
   tearDown(resetMocktailState);
 
-  group('single query parameters', () {
+  group('query parameters tests', () {
     test('with passing all parameters', () async {
       final request = createRequest(
         controller: controller,

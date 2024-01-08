@@ -25,39 +25,41 @@ void main() {
 
   tearDown(resetMocktailState);
 
-  test('integer path parameter', () async {
-    final request = createRequest(
-      controller: controller,
-      route: Route.get('/1'),
-    );
-    final response = await PathParametersController.router.call(request);
+  group('path parameters tests', () {
+    test('integer path parameter', () async {
+      final request = createRequest(
+        controller: controller,
+        route: Route.get('/1'),
+      );
+      final response = await PathParametersController.router.call(request);
 
-    expect(response.statusCode, 200);
+      expect(response.statusCode, 200);
 
-    verify(() => controller.fetchMessages(any(), 1));
-  });
+      verify(() => controller.fetchMessages(any(), 1));
+    });
 
-  test('string path parameter', () async {
-    final request = createRequest(
-      controller: controller,
-      route: Route.post('/text'),
-    );
-    final response = await PathParametersController.router.call(request);
+    test('string path parameter', () async {
+      final request = createRequest(
+        controller: controller,
+        route: Route.post('/text'),
+      );
+      final response = await PathParametersController.router.call(request);
 
-    expect(response.statusCode, 200);
+      expect(response.statusCode, 200);
 
-    verify(() => controller.createMessage(any(), 'text'));
-  });
+      verify(() => controller.createMessage(any(), 'text'));
+    });
 
-  test('decimal path parameter', () async {
-    final request = createRequest(
-      controller: controller,
-      route: Route.put('/${Decimal.one}'),
-    );
-    final response = await PathParametersController.router.call(request);
+    test('decimal path parameter', () async {
+      final request = createRequest(
+        controller: controller,
+        route: Route.put('/${Decimal.one}'),
+      );
+      final response = await PathParametersController.router.call(request);
 
-    expect(response.statusCode, 200);
+      expect(response.statusCode, 200);
 
-    verify(() => controller.updateMessage(any(), Decimal.one));
+      verify(() => controller.updateMessage(any(), Decimal.one));
+    });
   });
 }

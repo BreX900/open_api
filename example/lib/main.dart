@@ -6,6 +6,7 @@ import 'package:example/shared/api_route_group.routers.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_hotreload/shelf_hotreload.dart';
+import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_routing/shelf_routing.dart';
 import 'package:shelf_static/shelf_static.dart';
 import 'package:shelf_swagger_ui/shelf_swagger_ui.dart';
@@ -14,14 +15,14 @@ void main() => withHotreload(_runServer);
 
 Future<HttpServer> _runServer() async {
   final rootRouter = Router()
-    ..mount('/api', $apiRouter)
+    ..mount('/api', $apiRouteGroupRouter)
     ..mount('/swagger', SwaggerUI('public/example.open_api.yaml', title: 'Swagger Example Api'))
     ..mount('/', createStaticHandler('public'));
 
   // Configure a pipeline.
   final handler = Pipeline()
       .addMiddleware(logRequests())
-      .addMiddleware(getMiddleware(_getController))
+      .addMiddleware(getterMiddleware(_getController))
       .addHandler(rootRouter);
 
   // Use any available host or container IP (usually `0.0.0.0`).

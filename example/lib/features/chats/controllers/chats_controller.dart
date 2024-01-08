@@ -9,7 +9,7 @@ part 'chats_controller.g.dart';
 
 @ApiRouteGroup(prefix: '/chats')
 class ChatsController {
-  static Router get router => _$ChatsControllerRouter;
+  static Router get router => _$chatsControllerRouter;
 
   const ChatsController();
 
