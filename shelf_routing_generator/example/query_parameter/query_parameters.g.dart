@@ -7,7 +7,7 @@ part of 'query_parameters.dart';
 // **************************************************************************
 
 Router get _$queryParametersControllerRouter => Router()
-  ..add('GET', r' /single', (Request request) async {
+  ..add('GET', r'/single', (Request request) async {
     final $ = request.get<QueryParametersController>();
     return $.single(
       request,
@@ -22,7 +22,7 @@ Router get _$queryParametersControllerRouter => Router()
           (vls) => vls.isNotEmpty ? DateTime.parse(vls.single) : null),
     );
   })
-  ..add('GET', r' /list', (Request request) async {
+  ..add('GET', r'/list', (Request request) async {
     final $ = request.get<QueryParametersController>();
     return $.list(
       request,

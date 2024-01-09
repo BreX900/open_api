@@ -5,7 +5,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
-import '../../example/lib/path_parameters.dart';
+import '../../example/path_parameter/path_parameters.dart';
 import '../_utils.dart';
 
 class _MockPathParametersController extends Mock implements PathParametersController {}

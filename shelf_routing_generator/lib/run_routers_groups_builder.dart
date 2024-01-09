@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
+import 'package:path/path.dart' as p;
 import 'package:shelf_routing/shelf_routing.dart';
 import 'package:shelf_routing_generator/src/routers_groups_file_schema.dart';
 import 'package:shelf_routing_generator/src/utils.dart';
@@ -42,25 +43,29 @@ class RouterGroupGenerator extends Generator {
   }
 
   Future<String> generateForClass(ClassElement element, BuildStep buildStep) async {
-    final groupId = element.id;
+    final groupId = RoutesGroupSchema.getUid(element);
 
     final schemas = await buildStep
-        .findAssets(Glob('**/*${RoutersGroupsFileSchema.extension}'))
+        .findAssets(Glob('**/*${RoutersGroupsAssetSchema.extension}'))
         .asyncMap(buildStep.readAsString)
         .map(jsonDecode)
         .cast<Map<String, dynamic>>()
-        .map(RoutersGroupsFileSchema.fromJson)
-        .where((e) => e.groups.any((e) => e.id == groupId))
+        .map(RoutersGroupsAssetSchema.fromJson)
+        .map((e) => e.copyForGroup(groupId))
+        .where((e) => e.groups.isNotEmpty)
         .toList();
 
-    final libraries = schemas.map((e) => e.library);
-    final groups = schemas.expand((e) => e.groups.where((e) => e.id == groupId));
+    final imports = schemas.map((schema) {
+      if (schema.id.uri.scheme == 'package') return '${schema.id.uri}';
+      return p.relative(schema.id.path, from: p.dirname(buildStep.inputId.path));
+    });
+    final groups = schemas.expand((e) => e.groups.where((e) => e.uid == groupId));
 
     // Generate code
     final groupName = element.name;
     final varName = codePublicVarName('${groupName}Router');
 
-    final routersImportsCode = libraries.map((library) => "import '$library';").join('\n');
+    final routersImportsCode = imports.map((library) => "import '$library';").join('\n');
 
     final mountedRouters = groups.map((group) {
       return '..mount(\'${group.prefix}\', ${group.code})\n';

@@ -19,14 +19,6 @@ T $parseQueryParameters<T>(Request request, String name, T Function(List<String>
   }
 }
 
-// T $parseHeaders<T>(Request request, String name, T Function(List<String> vls) parser) {
-//   try {
-//     return parser(request.headersAll[name] ?? const <String>[]);
-//   } catch (error, stackTrace) {
-//     throw BadRequestException.header(error, stackTrace, name);
-//   }
-// }
-
 void $ensureHasHeader(Request request, String name) {
   try {
     ArgumentError.checkNotNull(request.headersAll[name], name);

@@ -4,7 +4,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
-import '../../example/lib/responses.dart';
+import '../../example/responses/responses.dart';
 import '../_utils.dart';
 
 class _MockResponsesController extends Mock implements ResponsesController {}

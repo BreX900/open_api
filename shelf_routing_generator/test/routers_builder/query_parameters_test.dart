@@ -4,7 +4,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
-import '../../example/lib/query_parameters.dart';
+import '../../example/query_parameter/query_parameters.dart';
 import '../_utils.dart';
 
 class _MockQueryParametersController extends Mock implements QueryParametersController {}

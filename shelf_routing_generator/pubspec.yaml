@@ -6,6 +6,9 @@ version: 1.0.0
 environment:
   sdk: ^3.2.3
 
+scripts:
+  runner:watch: dart run build_runner watch --delete-conflicting-outputs --verbose
+
 dependencies:
   shelf: ^1.4.1
   shelf_router: ^1.1.4
@@ -20,11 +23,14 @@ dependencies:
   collection: ^1.18.0
   recase: ^4.1.0
   glob: ^2.1.2
+  path: ^1.9.0
 
 dev_dependencies:
   lints: ^3.0.0
-  test: ^1.25.0
-  build_test: ^2.2.2
-  decimal: ^2.3.3
-  mocktail: ^1.0.2
 
+  test: ^1.25.0
+  mocktail: ^1.0.2
+  build_test: ^2.2.2
+
+  decimal: ^2.3.3
+  build_runner: ^2.4.7

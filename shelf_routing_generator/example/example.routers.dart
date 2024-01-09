@@ -5,8 +5,7 @@
 // **************************************************************************
 
 import 'package:shelf_router/shelf_router.dart';
-import 'package:example/routes_group.dart';
+import 'example.dart';
 
-Router get $exampleRoutesGroupRouter => Router()
-  ..mount('/', RoutesGroupController.router)
-  ..mount('/example', RoutesGroupWithPrefixController.router);
+Router get $exampleRoutesGroupRouter =>
+    Router()..mount('/', UserController.router);

@@ -97,7 +97,7 @@ class _YamlSink implements ChunkedConversionSink<Object?> {
   void close() {/* do nothing */}
 }
 
-/// Please dev follow [_JsonStringStringifier] code style
+/// Please dev follow `_JsonStringStringifier` code style
 class _YamlWriter {
   final StringSink _sink;
 

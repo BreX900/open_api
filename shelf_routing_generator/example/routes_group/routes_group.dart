@@ -1,7 +1,8 @@
-import 'package:example/example_route_group.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_routing/shelf_routing.dart';
+
+import 'route_group.dart';
 
 part 'routes_group.g.dart';
 

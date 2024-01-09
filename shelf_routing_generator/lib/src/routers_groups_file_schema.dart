@@ -1,43 +1,55 @@
-class RoutersGroupsFileSchema {
+import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
+
+class RoutersGroupsAssetSchema {
   static const String extension = '.routers_groups.json';
 
-  final String library;
+  final AssetId id;
   final List<RoutesGroupSchema> groups;
 
-  const RoutersGroupsFileSchema({
-    required this.library,
+  const RoutersGroupsAssetSchema({
+    required this.id,
     required this.groups,
   });
 
-  factory RoutersGroupsFileSchema.fromJson(Map<String, dynamic> map) {
-    return RoutersGroupsFileSchema(
-      library: map['library'] as String,
+  RoutersGroupsAssetSchema copyForGroup(String id) {
+    return RoutersGroupsAssetSchema(
+      id: this.id,
+      groups: groups.where((e) => e.uid == id).toList(),
+    );
+  }
+
+  factory RoutersGroupsAssetSchema.fromJson(Map<String, dynamic> map) {
+    return RoutersGroupsAssetSchema(
+      id: AssetId.deserialize(map['id'] as List<dynamic>),
       groups: (map['groups'] as List<dynamic>).map((e) => RoutesGroupSchema.fromJson(e)).toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'library': library,
+      'id': id.serialize(),
       'groups': groups,
     };
   }
 }
 
 class RoutesGroupSchema {
-  final int id;
+  final String uid;
   final String prefix;
   final String code;
 
   const RoutesGroupSchema({
-    required this.id,
+    required this.uid,
     required this.prefix,
     required this.code,
   });
 
+  static String getUid(Element element) => '${element.library!.identifier}:${element.name!}';
+
   factory RoutesGroupSchema.fromJson(Map<String, dynamic> map) {
     return RoutesGroupSchema(
-      id: map['id'] as int,
+      uid: map['uid'] as String,
       prefix: map['prefix'] as String,
       code: map['code'] as String,
     );
@@ -45,7 +57,7 @@ class RoutesGroupSchema {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'uid': uid,
       'prefix': prefix,
       'code': code,
     };

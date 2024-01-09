@@ -5,7 +5,7 @@
 // **************************************************************************
 
 import 'package:shelf_router/shelf_router.dart';
-import 'package:example/routes_group.dart';
+import 'routes_group.dart';
 
 Router get $exampleRoutesGroupRouter => Router()
   ..mount('/', RoutesGroupController.router)

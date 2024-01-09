@@ -4,8 +4,8 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
-import '../../example/example_route_group.routers.dart';
-import '../../example/routes_group.dart';
+import '../../example/routes_group/route_group.routers.dart';
+import '../../example/routes_group/routes_group.dart';
 import '../_utils.dart';
 
 class _MockRoutesGroupController extends Mock implements RoutesGroupController {}
@@ -27,13 +27,6 @@ void main() {
   });
 
   tearDown(resetMocktailState);
-
-  Map<Type, dynamic> getControllers<T>() {
-    return {
-      RoutesGroupController: controller,
-      RoutesGroupWithPrefixController: controllerWithPrefix,
-    };
-  }
 
   group('router for routes group tests', () {
     test('simple controller', () async {

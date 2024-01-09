@@ -19,10 +19,10 @@ Future<RouterBuilderAssets> testRouterBuilder({
   );
 
   final files = writer.assets.map((key, value) => MapEntry(key, utf8.decode(value)));
-  print(files.keys.toList());
+  print(files.values.toList());
   return RouterBuilderAssets(
     schema: jsonDecode(
-        files[AssetId(package, 'example${RoutersGroupsFileSchema.extension}')] ?? 'null'),
+        files[AssetId(package, 'example${RoutersGroupsAssetSchema.extension}')] ?? 'null'),
     routers: files[AssetId(package, 'example.routers.g.part')]
         ?.replaceAll(RegExp(r'//[^\n]*\n'), '')
         .split('\n')

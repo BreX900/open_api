@@ -14,8 +14,8 @@ import 'package:source_gen/source_gen.dart';
 Builder runRoutersBuilder(BuilderOptions options) {
   return SharedPartBuilder(
     const [RouterGenerator()],
-    'router',
-    additionalOutputExtensions: const [RoutersGroupsFileSchema.extension],
+    'routers',
+    additionalOutputExtensions: const [RoutersGroupsAssetSchema.extension],
   );
 }
 
@@ -78,7 +78,7 @@ class RouterGenerator extends Generator {
       :returns,
     ) = _;
 
-    final routePath = '${group.id != null ? ' ' : (group.prefix ?? ' ')}$route';
+    final routePath = '${group.uid != null ? '' : (group.prefix ?? '')}$route';
 
     final routeParams = [
       'Request request',
@@ -94,7 +94,7 @@ class RouterGenerator extends Generator {
         return parserCode != null ? '$parserCode(${e.name})' : e.name;
       }),
       if (bodyParameter != null)
-        'await request.readAs(${bodyParameter.type.getDisplayString(withNullability: false)}.fromJson)',
+        'await \$readBodyAs(request, ${bodyParameter.type.getDisplayString(withNullability: false)}.fromJson)',
       // if (headerParameters.isNotEmpty)
       //   ...headerParameters.map((e) {
       //     final key = e.name.paramCase;
@@ -141,10 +141,10 @@ class RouterGenerator extends Generator {
 
     // Generate routing
 
-    final routingSchema = RoutersGroupsFileSchema(
-      library: library.element.identifier,
+    final routingSchema = RoutersGroupsAssetSchema(
+      id: buildStep.inputId,
       groups: groups.expand<RoutesGroupSchema>((group) sync* {
-        final groupId = group.id;
+        final groupId = group.uid;
         if (groupId == null) return;
 
         final class$ = group.element;
@@ -159,7 +159,7 @@ class RouterGenerator extends Generator {
           );
         }
         yield RoutesGroupSchema(
-          id: groupId,
+          uid: groupId,
           prefix: group.prefix ?? '/',
           code: '${class$.name}.${method.name}',
         );
