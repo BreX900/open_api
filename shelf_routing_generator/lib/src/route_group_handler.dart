@@ -5,7 +5,7 @@ import 'package:shelf_routing_generator/src/routers_groups_file_schema.dart';
 import 'package:source_gen/source_gen.dart';
 
 class RouteGroupHandler {
-  static const _checker = TypeChecker.fromRuntime(RoutesGroup);
+  static const _checker = TypeChecker.fromRuntime(Routing);
 
   final String? uid;
   final String? prefix;
@@ -15,7 +15,7 @@ class RouteGroupHandler {
   static RouteGroupHandler? from(ClassElement element) {
     final annotation = ConstantReader(_checker.firstAnnotationOf(element));
     final uid =
-        annotation.isNull ? null : RoutesGroupSchema.getUid(annotation.objectValue.type!.element!);
+        annotation.isNull ? null : RouterGroupSchema.getUid(annotation.objectValue.type!.element!);
     final prefix = annotation.peek('prefix')?.stringValue;
 
     final routes = element.methods.map(RouteHandler.from).nonNulls.toList();

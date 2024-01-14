@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
-import 'package:shelf_routing_generator/run_routers_builder.dart';
+import 'package:shelf_routing_generator/run_router_builder.dart';
 import 'package:shelf_routing_generator/src/routers_groups_file_schema.dart';
 
 Future<RouterBuilderAssets> testRouterBuilder({
@@ -12,7 +12,7 @@ Future<RouterBuilderAssets> testRouterBuilder({
   final writer = InMemoryAssetWriter();
 
   await testBuilder(
-    runRoutersBuilder(BuilderOptions.empty),
+    runRouterBuilder(BuilderOptions.empty),
     {'$package|example.dart': source},
     reader: await PackageAssetReader.currentIsolate(),
     writer: writer,
@@ -22,7 +22,7 @@ Future<RouterBuilderAssets> testRouterBuilder({
   print(files.values.toList());
   return RouterBuilderAssets(
     schema: jsonDecode(
-        files[AssetId(package, 'example${RoutersGroupsAssetSchema.extension}')] ?? 'null'),
+        files[AssetId(package, 'example${RouterGroupsAssetSchema.extension}')] ?? 'null'),
     routers: files[AssetId(package, 'example.routers.g.part')]
         ?.replaceAll(RegExp(r'//[^\n]*\n'), '')
         .split('\n')

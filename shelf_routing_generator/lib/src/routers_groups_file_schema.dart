@@ -1,28 +1,28 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 
-class RoutersGroupsAssetSchema {
-  static const String extension = '.routers_groups.json';
+class RouterGroupsAssetSchema {
+  static const String extension = '.router_groups.json';
 
   final AssetId id;
-  final List<RoutesGroupSchema> groups;
+  final List<RouterGroupSchema> groups;
 
-  const RoutersGroupsAssetSchema({
+  const RouterGroupsAssetSchema({
     required this.id,
     required this.groups,
   });
 
-  RoutersGroupsAssetSchema copyForGroup(String id) {
-    return RoutersGroupsAssetSchema(
+  RouterGroupsAssetSchema copyForGroup(String id) {
+    return RouterGroupsAssetSchema(
       id: this.id,
       groups: groups.where((e) => e.uid == id).toList(),
     );
   }
 
-  factory RoutersGroupsAssetSchema.fromJson(Map<String, dynamic> map) {
-    return RoutersGroupsAssetSchema(
+  factory RouterGroupsAssetSchema.fromJson(Map<String, dynamic> map) {
+    return RouterGroupsAssetSchema(
       id: AssetId.deserialize(map['id'] as List<dynamic>),
-      groups: (map['groups'] as List<dynamic>).map((e) => RoutesGroupSchema.fromJson(e)).toList(),
+      groups: (map['groups'] as List<dynamic>).map((e) => RouterGroupSchema.fromJson(e)).toList(),
     );
   }
 
@@ -34,12 +34,12 @@ class RoutersGroupsAssetSchema {
   }
 }
 
-class RoutesGroupSchema {
+class RouterGroupSchema {
   final String uid;
   final String prefix;
   final String code;
 
-  const RoutesGroupSchema({
+  const RouterGroupSchema({
     required this.uid,
     required this.prefix,
     required this.code,
@@ -47,8 +47,8 @@ class RoutesGroupSchema {
 
   static String getUid(Element element) => '${element.library!.identifier}:${element.name!}';
 
-  factory RoutesGroupSchema.fromJson(Map<String, dynamic> map) {
-    return RoutesGroupSchema(
+  factory RouterGroupSchema.fromJson(Map<String, dynamic> map) {
+    return RouterGroupSchema(
       uid: map['uid'] as String,
       prefix: map['prefix'] as String,
       code: map['code'] as String,

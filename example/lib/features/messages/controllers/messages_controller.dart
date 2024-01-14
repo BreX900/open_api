@@ -9,7 +9,7 @@ import 'package:shelf_routing/shelf_routing.dart';
 
 part 'messages_controller.g.dart';
 
-@ApiRouteGroup(prefix: '/messages/v2')
+@ApiRouterGroup(prefix: '/messages/v2')
 class MessagesController {
   static Router get router => _$messagesControllerRouter;
 

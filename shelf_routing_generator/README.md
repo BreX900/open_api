@@ -1,33 +1,60 @@
-Shelf Router Generator
-Shelf makes it easy to build web applications in Dart by composing request handlers. The shelf_router package offers a request router for Shelf. this package enables generating a shelf_route.Router from annotations in code.
+# Shelf Routing
+Shelf makes it easy to build web applications in Dart by composing request handlers. The shelf_routing package offers a request router for Shelf. this package enables generating a shelf_router.Router from annotations in code.
 
-This package should be a development dependency along with package build_runner, and used with package shelf and package shelf_router as dependencies.
+This package should be a development dependency along with package build_runner, and used with package shelf and package shelf_routing as dependencies.
 
+```yaml
 dependencies:
-shelf: ^0.7.5
-shelf_router: ^0.7.0+1
+  shelf: ^0.7.5
+  shelf_router: ^0.7.0+1
 dev_dependencies:
-shelf_router_generator: ^0.7.0+1
-build_runner: ^1.3.1
+  shelf_router_generator: ^0.7.0+1
+  build_runner: ^1.3.1
+```
 Once your code have been annotated as illustrated in the example below the generated part can be created with pub run build_runner build.
 
 Example
 ```dart
 import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_routing/shelf_routing.dart';
-import 'userservice.routers.dart';
 
-part 'userservice.g.dart'; // generated with 'pub run build_runner build'
+// generated with 'pub run build_runner build'
+import 'example.routers.dart';
 
+part 'example.g.dart';
+
+class User {
+  final int id;
+  final String name;
+
+  const User({
+    required this.id,
+    required this.name,
+  });
+
+  factory User.fromJson(Map<String, dynamic> map) => User(id: map['id'], name: map['name']);
+  Map<String, dynamic> toJson() => {'id': id, 'name': name};
+}
+
+// Define a router group to create a router with all routers.
+class ExampleRoutesGroup extends RoutesGroup {
+  const ExampleRoutesGroup({super.prefix});
+}
+
+@ExampleRoutesGroup()
 class UserController {
+  // Create router using the generate function defined in 'userservice.g.dart'.
+  static Router get router => _$userControllerRouter;
+
   final DatabaseConnection connection;
 
-  UserService(this.connection);
+  UserController(this.connection);
 
-  @Route.get('/users/')
-  Future<JsonResponse<List<dynamic>>> listUsers(Request request, {String? query}) async {
-    return Response.ok('["user1"]');
+  @Route.get('/users')
+  Future<List<dynamic>> listUsers(Request request, {String? query}) async {
+    return ['user1'];
   }
 
   @Route.get('/users/<userId>')
@@ -38,25 +65,30 @@ class UserController {
     return Response.notFound('no such user');
   }
 
-  // Create router using the generate function defined in 'userservice.g.dart'.
-  Router get router => _$userServiceRouter(this);
-}
-
-// Define a router group to create a router with all routers.
-class ExampleRoutesGroup extends RoutesGroup {
-  const ExampleRoutesGroup({super.prefix});
+  @Route.post('/users')
+  Future<JsonResponse<User>> createUser(Request request, User user) async {
+    if (user.name.isEmpty) {
+      return JsonResponse.badRequest('Missing name field');
+    }
+    return JsonResponse.ok(user);
+  }
 }
 
 void main() async {
-// You can setup context, database connections, cache connections, email
-// services, before you create an instance of your service.
+  // You can setup context, database connections, cache connections, email
+  // services, before you create an instance of your service.
   final connection = await DatabaseConnection.connect('localhost:1234');
 
-// Create an instance of your service, usine one of the constructors you've
-// defined.
-  var service = UserService(connection);
-// Service request using the router, note the router can also be mounted.
-  var router = Pipeline().addMiddleware().addHandler($exampleRoutesGroup);
-  var server = await io.serve(router.handler, 'localhost', 8080);
+  // Define a function to inject your controllers.
+  // You can use the get_it package.
+  T get<T extends Object>(Request request) {
+    return UserController(connection) as T;
+  }
+
+  // Service request using the router, note the router can also be mounted.
+  final handler =
+  Pipeline().addMiddleware(getterMiddleware(get)).addHandler($exampleRoutesGroupRouter);
+  await serve(handler, 'localhost', 8080);
 }
+
 ```

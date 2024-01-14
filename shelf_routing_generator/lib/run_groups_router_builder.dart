@@ -10,31 +10,21 @@ import 'package:shelf_routing_generator/src/routers_groups_file_schema.dart';
 import 'package:shelf_routing_generator/src/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
-Builder runRoutersGroupsBuilder(BuilderOptions options) {
+Builder runGroupsRouterBuilder(BuilderOptions options) {
   return LibraryBuilder(
-    const RouterGroupGenerator(),
-    generatedExtension: '.routers.dart',
+    const GroupsRouterGenerator(),
+    generatedExtension: '.router.dart',
     options: options,
   );
 }
 
-class GenerateRouterForGroupHandler {
-  final String name;
-
-  const GenerateRouterForGroupHandler._(this.name);
-
-  factory GenerateRouterForGroupHandler.from(ConstantReader annotation) {
-    return GenerateRouterForGroupHandler._(annotation.read('name').stringValue);
-  }
-}
-
-class RouterGroupGenerator extends Generator {
-  const RouterGroupGenerator();
+class GroupsRouterGenerator extends Generator {
+  const GroupsRouterGenerator();
 
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
     final classes = library.classes.where((element) {
-      return TypeChecker.fromRuntime(RoutesGroup).isAssignableFrom(element);
+      return TypeChecker.fromRuntime(Routing).isAssignableFrom(element);
     });
 
     final code = await Future.wait(classes.map((class$) => generateForClass(class$, buildStep)));
@@ -43,14 +33,14 @@ class RouterGroupGenerator extends Generator {
   }
 
   Future<String> generateForClass(ClassElement element, BuildStep buildStep) async {
-    final groupId = RoutesGroupSchema.getUid(element);
+    final groupId = RouterGroupSchema.getUid(element);
 
     final schemas = await buildStep
-        .findAssets(Glob('**/*${RoutersGroupsAssetSchema.extension}'))
+        .findAssets(Glob('**/*${RouterGroupsAssetSchema.extension}'))
         .asyncMap(buildStep.readAsString)
         .map(jsonDecode)
         .cast<Map<String, dynamic>>()
-        .map(RoutersGroupsAssetSchema.fromJson)
+        .map(RouterGroupsAssetSchema.fromJson)
         .map((e) => e.copyForGroup(groupId))
         .where((e) => e.groups.isNotEmpty)
         .toList();

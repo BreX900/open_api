@@ -22,7 +22,7 @@ class User {
 }
 
 // Define a router group to create a router with all routers.
-class ExampleRoutesGroup extends RoutesGroup {
+class ExampleRoutesGroup extends Routing {
   const ExampleRoutesGroup({super.prefix});
 }
 

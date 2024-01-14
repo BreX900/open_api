@@ -10,19 +10,19 @@ targets:
 
 builders:
   shelf_routing_generator:
-    import: package:shelf_routing_generator/run_routers_builder.dart
-    builder_factories: [ 'runRoutersBuilder' ]
+    import: package:shelf_routing_generator/run_router_builder.dart
+    builder_factories: [ 'runRouterBuilder' ]
     applies_builders: [ 'source_gen:combining_builder' ]
-    build_extensions: { '.dart': [ '.routers.g.part', '.routers_groups.json' ] }
+    build_extensions: { '.dart': [ '.router.g.part', '.router_groups.json' ] }
     auto_apply: dependents
     build_to: cache
 
   shelf_routing_generator:groups:
-    import: package:shelf_routing_generator/run_routers_groups_builder.dart
-    builder_factories: [ 'runRoutersGroupsBuilder' ]
+    import: package:shelf_routing_generator/run_groups_router_builder.dart
+    builder_factories: [ 'runGroupsRouterBuilder' ]
     required_inputs: [ '.routers_groups.json' ]
     applies_builders: [ 'source_gen:combining_builder' ]
-    build_extensions: { '.dart': [ '.routers.dart' ] }
+    build_extensions: { '.dart': [ '.router.dart' ] }
     auto_apply: dependents
     build_to: source
 

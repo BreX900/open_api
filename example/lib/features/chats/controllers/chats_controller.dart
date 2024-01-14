@@ -7,7 +7,7 @@ import 'package:shelf_routing/shelf_routing.dart';
 
 part 'chats_controller.g.dart';
 
-@ApiRouteGroup(prefix: '/chats')
+@ApiRouterGroup(prefix: '/chats')
 class ChatsController {
   static Router get router => _$chatsControllerRouter;
 

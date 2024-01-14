@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:example/features/chats/controllers/chats_controller.dart';
 import 'package:example/features/messages/controllers/messages_controller.dart';
+import 'package:example/shared/api_route_group.dart';
 import 'package:example/shared/api_route_group.routers.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
@@ -11,11 +12,16 @@ import 'package:shelf_routing/shelf_routing.dart';
 import 'package:shelf_static/shelf_static.dart';
 import 'package:shelf_swagger_ui/shelf_swagger_ui.dart';
 
+part 'main.g.dart';
+
+@GenerateRouterFor([ChatsController, MessagesController])
+final _apiRouter = _$apiRouter;
+
 void main() => withHotreload(_runServer);
 
 Future<HttpServer> _runServer() async {
   final rootRouter = Router()
-    ..mount('/api', $apiRouteGroupRouter)
+    ..mount('/api', ApiRouterGroup.router)
     ..mount('/swagger', SwaggerUI('public/example.open_api.yaml', title: 'Swagger Example Api'))
     ..mount('/', createStaticHandler('public'));
 

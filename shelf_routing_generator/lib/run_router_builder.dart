@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
@@ -11,11 +10,11 @@ import 'package:shelf_routing_generator/src/routers_groups_file_schema.dart';
 import 'package:shelf_routing_generator/src/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
-Builder runRoutersBuilder(BuilderOptions options) {
+Builder runRouterBuilder(BuilderOptions options) {
   return SharedPartBuilder(
     const [RouterGenerator()],
-    'routers',
-    additionalOutputExtensions: const [RoutersGroupsAssetSchema.extension],
+    'router',
+    additionalOutputExtensions: const [RouterGroupsAssetSchema.extension],
   );
 }
 
@@ -139,36 +138,36 @@ class RouterGenerator extends Generator {
     final groups = library.classes.map(RouteGroupHandler.from).nonNulls.toList();
     if (groups.isEmpty) return null;
 
-    // Generate routing
-
-    final routingSchema = RoutersGroupsAssetSchema(
-      id: buildStep.inputId,
-      groups: groups.expand<RoutesGroupSchema>((group) sync* {
-        final groupId = group.uid;
-        if (groupId == null) return;
-
-        final class$ = group.element;
-        final method = class$.fields.singleWhereOrNull((e) {
-          return e.isStatic && isHandlerAssignableFromType(e.type);
-        });
-        if (method == null) {
-          throw InvalidGenerationSource(
-            'Missing static router field.',
-            todo: 'Router get router => _\$${class$.name}Router',
-            element: group.element,
-          );
-        }
-        yield RoutesGroupSchema(
-          uid: groupId,
-          prefix: group.prefix ?? '/',
-          code: '${class$.name}.${method.name}',
-        );
-      }).toList(),
-    );
-    if (routingSchema.groups.isNotEmpty) {
-      final routingAsset = buildStep.allowedOutputs.skip(1).first;
-      await buildStep.writeAsString(routingAsset, jsonEncode(routingSchema));
-    }
+    // // Generate routing
+    //
+    // final routingSchema = RouterGroupsAssetSchema(
+    //   id: buildStep.inputId,
+    //   groups: groups.expand<RouterGroupSchema>((group) sync* {
+    //     final groupId = group.uid;
+    //     if (groupId == null) return;
+    //
+    //     final class$ = group.element;
+    //     final method = class$.fields.singleWhereOrNull((e) {
+    //       return e.isStatic && isHandlerAssignableFromType(e.type);
+    //     });
+    //     if (method == null) {
+    //       throw InvalidGenerationSource(
+    //         'Missing static router field.',
+    //         todo: 'Router get router => _\$${class$.name}Router',
+    //         element: group.element,
+    //       );
+    //     }
+    //     yield RouterGroupSchema(
+    //       uid: groupId,
+    //       prefix: group.prefix ?? '/',
+    //       code: '${class$.name}.${method.name}',
+    //     );
+    //   }).toList(),
+    // );
+    // if (routingSchema.groups.isNotEmpty) {
+    //   final routingAsset = buildStep.allowedOutputs.skip(1).first;
+    //   await buildStep.writeAsString(routingAsset, jsonEncode(routingSchema));
+    // }
 
     // Generate router
 
