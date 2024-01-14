@@ -32,7 +32,7 @@ Builder buildOpenApi(BuilderOptions options) {
 // https://github.com/dart-lang/build/blob/master/docs/writing_an_aggregate_builder.md
 class OpenApiBuilder implements Builder {
   // static final _openApiType = TypeChecker.fromRuntime(OpenApiConfig);
-  static final _routeGroupType = TypeChecker.fromRuntime(Routing);
+  static final _routeGroupType = TypeChecker.fromRuntime(Routable);
   static final _routeType = TypeChecker.fromRuntime(Route);
   static final _openApiRouteType = TypeChecker.fromRuntime(OpenApiRoute);
 

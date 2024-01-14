@@ -7,17 +7,18 @@ export 'package:shelf_routing/src/json_response.dart';
 export 'package:shelf_routing/src/route.dart';
 export 'package:shelf_routing/src/utils.dart';
 
+@Target({TargetKind.getter})
 class GenerateRouterFor {
-  final List<Type> controllers;
+  final List<Type> routables;
 
-  const GenerateRouterFor(this.controllers);
+  const GenerateRouterFor(this.routables);
 }
 
 @Target({TargetKind.classType})
-class Routing {
+class Routable {
   final String prefix;
 
-  const Routing({required this.prefix});
+  const Routable({required this.prefix});
 }
 
 @Target({TargetKind.method})

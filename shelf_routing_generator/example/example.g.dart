@@ -7,7 +7,7 @@ part of 'example.dart';
 // **************************************************************************
 
 Router get _$userControllerRouter => Router()
-  ..add('GET', r'/users', (Request request) async {
+  ..add('GET', r'/', (Request request) async {
     final $ = request.get<UserController>();
     final $data = await $.listUsers(
       request,
@@ -16,17 +16,23 @@ Router get _$userControllerRouter => Router()
     );
     return JsonResponse.ok($data);
   })
-  ..add('GET', r'/users/<userId>', (Request request, String userId) async {
+  ..add('GET', r'/<userId>', (Request request, String userId) async {
     final $ = request.get<UserController>();
     return await $.fetchUser(
       request,
       int.parse(userId),
     );
   })
-  ..add('POST', r'/users', (Request request) async {
+  ..add('POST', r'/', (Request request) async {
     final $ = request.get<UserController>();
     return await $.createUser(
       request,
       await $readBodyAs(request, User.fromJson),
     );
   });
+
+// **************************************************************************
+// GroupsRouterGenerator
+// **************************************************************************
+
+Router get _$apiRouter => Router()..mount('/users', UserController.router);

@@ -4,18 +4,12 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
 import 'package:recase/recase.dart';
-import 'package:shelf_routing_generator/src/route_group_handler.dart';
 import 'package:shelf_routing_generator/src/route_handler.dart';
-import 'package:shelf_routing_generator/src/routers_groups_file_schema.dart';
 import 'package:shelf_routing_generator/src/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
 Builder runRouterBuilder(BuilderOptions options) {
-  return SharedPartBuilder(
-    const [RouterGenerator()],
-    'router',
-    additionalOutputExtensions: const [RouterGroupsAssetSchema.extension],
-  );
+  return SharedPartBuilder(const [RouterGenerator()], 'router');
 }
 
 class RouterGenerator extends Generator {
@@ -64,10 +58,11 @@ class RouterGenerator extends Generator {
     }
   }
 
-  String _codeAddRoute(RouteGroupHandler group, RouteHandler _) {
+  String _codeAddRoute(RouteHandler _) {
     final RouteHandler(
+      :routable,
       method: verb,
-      path: route,
+      :path,
       :element,
       :hasRequest,
       :pathParameters,
@@ -76,8 +71,6 @@ class RouterGenerator extends Generator {
       :queryParameters,
       :returns,
     ) = _;
-
-    final routePath = '${group.uid != null ? '' : (group.prefix ?? '')}$route';
 
     final routeParams = [
       'Request request',
@@ -127,55 +120,24 @@ class RouterGenerator extends Generator {
     };
 
     return '''
-  ..add('$verb', r'$routePath', ($routeParams) async {$headersCode
-    final \$ = request.get<${group.element.name}>();
+  ..add('$verb', r'$path', ($routeParams) async {$headersCode
+    final \$ = request.get<${routable.element.name}>();
     $responseCode
   })''';
   }
 
   @override
   Future<String?> generate(LibraryReader library, BuildStep buildStep) async {
-    final groups = library.classes.map(RouteGroupHandler.from).nonNulls.toList();
-    if (groups.isEmpty) return null;
+    final routes = library.classes.expand(RouteHandler.fromClass).toList();
+    if (routes.isEmpty) return null;
 
-    // // Generate routing
-    //
-    // final routingSchema = RouterGroupsAssetSchema(
-    //   id: buildStep.inputId,
-    //   groups: groups.expand<RouterGroupSchema>((group) sync* {
-    //     final groupId = group.uid;
-    //     if (groupId == null) return;
-    //
-    //     final class$ = group.element;
-    //     final method = class$.fields.singleWhereOrNull((e) {
-    //       return e.isStatic && isHandlerAssignableFromType(e.type);
-    //     });
-    //     if (method == null) {
-    //       throw InvalidGenerationSource(
-    //         'Missing static router field.',
-    //         todo: 'Router get router => _\$${class$.name}Router',
-    //         element: group.element,
-    //       );
-    //     }
-    //     yield RouterGroupSchema(
-    //       uid: groupId,
-    //       prefix: group.prefix ?? '/',
-    //       code: '${class$.name}.${method.name}',
-    //     );
-    //   }).toList(),
-    // );
-    // if (routingSchema.groups.isNotEmpty) {
-    //   final routingAsset = buildStep.allowedOutputs.skip(1).first;
-    //   await buildStep.writeAsString(routingAsset, jsonEncode(routingSchema));
-    // }
+    final routables = routes.groupListsBy((e) => e.routable.element);
 
-    // Generate router
-
-    return groups.map((_) {
-      final RouteGroupHandler(:element, :routes) = _;
-      final routesCode = routes.map((route) => _codeAddRoute(_, route)).join();
+    return routables.entries.map((_) {
+      final MapEntry(key: class$, value: routes) = _;
+      final routesCode = routes.map((route) => _codeAddRoute(route)).join();
       return '''
-Router get _${codePublicVarName('${element.name}Router')} => Router()\n
+Router get _${codePublicVarName('${class$.name}Router')} => Router()\n
   $routesCode;''';
     }).join('\n');
   }

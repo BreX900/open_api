@@ -6,7 +6,6 @@ import 'route_group.dart';
 
 part 'routes_group.g.dart';
 
-@ExampleRoutesGroup()
 class RoutesGroupController {
   static Router get router => _$routesGroupControllerRouter;
 
@@ -19,7 +18,7 @@ class RoutesGroupController {
   }
 }
 
-@ExampleRoutesGroup(prefix: '/example')
+@RoutableV1(prefix: '/example')
 class RoutesGroupWithPrefixController {
   static Router get router => _$routesGroupWithPrefixControllerRouter;
 

@@ -137,6 +137,7 @@ class _YamlWriter {
     }
   }
 
+  // ignore: avoid_positional_boolean_parameters
   void writeBoolean(bool boolean) {
     if (!isInitialLine) _writeValueIndentation();
     _sink.write(boolean);

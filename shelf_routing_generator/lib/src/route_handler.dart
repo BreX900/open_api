@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf_routing_generator/shelf_routing_generator.dart';
 import 'package:shelf_routing_generator/src/route_header_handler.dart';
 import 'package:shelf_routing_generator/src/utils.dart';
 import 'package:source_gen/source_gen.dart';
@@ -10,9 +11,10 @@ enum RouteReturnsType { response, json, nothing }
 class RouteHandler {
   static const TypeChecker _checker = TypeChecker.fromRuntime(Route);
 
+  final RoutableHandler routable;
+  final MethodElement element;
   final String method;
   final String path;
-  final MethodElement element;
 
   final ParameterElement? bodyParameter;
   final bool hasRequest;
@@ -22,19 +24,12 @@ class RouteHandler {
   final List<ParameterElement> queryParameters;
   final RouteReturnsType returns;
 
-  RouteHandler._({
-    required this.method,
-    required this.path,
-    required this.element,
-    required this.bodyParameter,
-    required this.hasRequest,
-    required this.pathParameters,
-    required this.headers,
-    required this.queryParameters,
-    required this.returns,
-  });
+  static List<RouteHandler> fromClass(ClassElement element) {
+    final routable = RoutableHandler.from(element);
+    return element.methods.map((method) => RouteHandler.from(routable, method)).nonNulls.toList();
+  }
 
-  static RouteHandler? from(MethodElement element) {
+  static RouteHandler? from(RoutableHandler routable, MethodElement element) {
     final annotation = ConstantReader(_checker.firstAnnotationOf(element));
     if (annotation.isNull) return null;
 
@@ -93,6 +88,7 @@ class RouteHandler {
     final queryParameters = element.parameters.where((e) => e.isNamed).toList();
 
     return RouteHandler._(
+      routable: routable,
       method: verb,
       path: route,
       element: element,
@@ -128,4 +124,17 @@ class RouteHandler {
     throw InvalidGenerationSourceError('Please update $typeName with valid returns json value.',
         element: type.element);
   }
+
+  RouteHandler._({
+    required this.routable,
+    required this.element,
+    required this.method,
+    required this.path,
+    required this.bodyParameter,
+    required this.hasRequest,
+    required this.pathParameters,
+    required this.headers,
+    required this.queryParameters,
+    required this.returns,
+  });
 }

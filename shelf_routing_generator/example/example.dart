@@ -4,8 +4,6 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_routing/shelf_routing.dart';
 
 // generated with 'pub run build_runner build'
-import 'example.routers.dart';
-
 part 'example.g.dart';
 
 class User {
@@ -21,26 +19,21 @@ class User {
   Map<String, dynamic> toJson() => {'id': id, 'name': name};
 }
 
-// Define a router group to create a router with all routers.
-class ExampleRoutesGroup extends Routing {
-  const ExampleRoutesGroup({super.prefix});
-}
-
-@ExampleRoutesGroup()
+@Routable(prefix: '/users')
 class UserController {
-  // Create router using the generate function defined in 'userservice.g.dart'.
+  // Create router using the generate function defined in 'example.g.dart'.
   static Router get router => _$userControllerRouter;
 
   final DatabaseConnection connection;
 
   UserController(this.connection);
 
-  @Route.get('/users')
+  @Route.get('/')
   Future<List<dynamic>> listUsers(Request request, {String? query}) async {
     return ['user1'];
   }
 
-  @Route.get('/users/<userId>')
+  @Route.get('/<userId>')
   Future<Response> fetchUser(Request request, int userId) async {
     if (userId == 1) {
       return Response.ok('user1');
@@ -48,7 +41,7 @@ class UserController {
     return Response.notFound('no such user');
   }
 
-  @Route.post('/users')
+  @Route.post('/')
   Future<JsonResponse<User>> createUser(Request request, User user) async {
     if (user.name.isEmpty) {
       return JsonResponse.badRequest('Missing name field');
@@ -56,6 +49,10 @@ class UserController {
     return JsonResponse.ok(user);
   }
 }
+
+// Create router using the generate function defined in 'example.g.dart'.
+@GenerateRouterFor([UserController])
+Router get _apiRouter => _$apiRouter;
 
 void main() async {
   // You can setup context, database connections, cache connections, email
@@ -69,7 +66,10 @@ void main() async {
   }
 
   // Service request using the router, note the router can also be mounted.
-  final handler =
-      Pipeline().addMiddleware(getterMiddleware(get)).addHandler($exampleRoutesGroupRouter);
+  final handler = Pipeline().addMiddleware(getterMiddleware(get)).addHandler(_apiRouter);
   await serve(handler, 'localhost', 8080);
+}
+
+class DatabaseConnection {
+  static Future<DatabaseConnection> connect(String _) => throw UnimplementedError();
 }

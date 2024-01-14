@@ -20,9 +20,9 @@ void main() {
     Response get(Request request) => throw UnimplementedError();
   }''';
 
-    final assets = await testRouterBuilder(source: source);
+    final code = await testRouterBuilder(source: source);
 
-    expect(assets.routers, r'''
+    expect(code, r'''
 Router get _$controllerRouter => Router()
   ..add('GET', r'/get', (Request request) async {
     $ensureHasHeader(request, 'authorization');

@@ -1,30 +1,29 @@
 targets:
   $default:
     builders:
-      shelf_routing_generator:
+      shelf_routing_generator:router:
         generate_for:
           - example/**
-      shelf_routing_generator:groups:
+      shelf_routing_generator:
         generate_for:
           - example/**
 
 builders:
-  shelf_routing_generator:
+  shelf_routing_generator:router:
     import: package:shelf_routing_generator/run_router_builder.dart
     builder_factories: [ 'runRouterBuilder' ]
     applies_builders: [ 'source_gen:combining_builder' ]
-    build_extensions: { '.dart': [ '.router.g.part', '.router_groups.json' ] }
+    build_extensions: { '.dart': [ '.router.g.part' ] }
     auto_apply: dependents
     build_to: cache
 
-  shelf_routing_generator:groups:
-    import: package:shelf_routing_generator/run_groups_router_builder.dart
-    builder_factories: [ 'runGroupsRouterBuilder' ]
-    required_inputs: [ '.routers_groups.json' ]
+  shelf_routing_generator:
+    import: package:shelf_routing_generator/run_routing_builder.dart
+    builder_factories: [ 'runRoutingBuilder' ]
     applies_builders: [ 'source_gen:combining_builder' ]
-    build_extensions: { '.dart': [ '.router.dart' ] }
+    build_extensions: { '.dart': [ '.routing.g.part' ] }
     auto_apply: dependents
-    build_to: source
+    build_to: cache
 
 
 

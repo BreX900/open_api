@@ -1,12 +1,11 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+part of 'route_group.dart';
+
 // **************************************************************************
-// RouterGroupGenerator
+// GroupsRouterGenerator
 // **************************************************************************
 
-import 'package:shelf_router/shelf_router.dart';
-import 'routes_group.dart';
-
-Router get $exampleRoutesGroupRouter => Router()
+Router get _$v1Router => Router()
   ..mount('/', RoutesGroupController.router)
-  ..mount('/example', RoutesGroupWithPrefixController.router);
+  ..mount('/v1/example', RoutesGroupWithPrefixController.router);

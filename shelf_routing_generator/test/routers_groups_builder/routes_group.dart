@@ -4,7 +4,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
-import '../../example/routes_group/route_group.routers.dart';
+import '../../example/routes_group/route_group.dart';
 import '../../example/routes_group/routes_group.dart';
 import '../_utils.dart';
 
@@ -36,7 +36,7 @@ void main() {
         controller: controller,
         route: Route.get('/'),
       );
-      final response = await $exampleRoutesGroupRouter.call(request);
+      final response = await v1Router.call(request);
 
       expect(response.statusCode, 200);
 
@@ -50,7 +50,7 @@ void main() {
         controller: controllerWithPrefix,
         route: Route.post('/example'),
       );
-      final response = await $exampleRoutesGroupRouter.call(request);
+      final response = await v1Router.call(request);
 
       expect(response.statusCode, 200);
 
