@@ -2,36 +2,38 @@ import 'dart:convert';
 
 abstract class FileUtils {
   static String yamlFrom(Object? json) {
-    return YamlEncoder(toEncodable: (vl) => vl?.toJson()).convert(json);
+    // ignore: avoid_dynamic_calls
+    return YamlEncoder(toEncodable: (vl) => (vl as dynamic)?.toJson()).convert(json);
     // return json2yaml(_jsonToYaml(json));
   }
 
-  static final _badKeys = RegExp('[*#]');
-  static dynamic _jsonToYaml(Object? node) {
-    if (node is List) {
-      return <dynamic>[
-        for (final value in node) _jsonToYaml(value),
-      ];
-    } else if (node is Map<dynamic, dynamic>) {
-      return <String, dynamic>{
-        for (final e in node.entries) '${_jsonToYaml(e.key)}': _jsonToYaml(e.value),
-      };
-    } else if (node is String) {
-      node = node.replaceAll('"', r'\"');
-      return _badKeys.hasMatch(node) ? '"$node"' : node;
-    }
-    return node;
-  }
+  // static final _badKeys = RegExp('[*#]');
+  // static dynamic _jsonToYaml(Object? node) {
+  //   if (node is List) {
+  //     return <dynamic>[
+  //       for (final value in node) _jsonToYaml(value),
+  //     ];
+  //   } else if (node is Map<dynamic, dynamic>) {
+  //     return <String, dynamic>{
+  //       for (final e in node.entries) '${_jsonToYaml(e.key)}': _jsonToYaml(e.value),
+  //     };
+  //   } else if (node is String) {
+  //     node = node.replaceAll('"', r'\"');
+  //     return _badKeys.hasMatch(node) ? '"$node"' : node;
+  //   }
+  //   return node;
+  // }
 }
 
 /// Why has custom implementation?
 /// fhir_yaml: ^0.9.0 package not convert string with "\n" to multiline string
 /// yaml_writer: ^1.0.2 package add empty "random" line on yaml generated
+// TODO: Try replace with yaml_writer
 class YamlEncoder extends Converter<Object?, String> {
   final int indent;
   final bool shouldMultilineStringInBlock;
   final int? maxStringLineWidth; // TODO: Add support to maxStringLineWidth
-  final Object? Function(dynamic)? toEncodable;
+  final Object? Function(Object?)? toEncodable;
 
   const YamlEncoder({
     this.indent = 2,
@@ -67,7 +69,7 @@ class _YamlSink implements ChunkedConversionSink<Object?> {
   final StringConversionSink _sink;
   final int indent;
   final bool shouldMultilineStringInBlock;
-  final Object? Function(dynamic)? toEncodable;
+  final Object? Function(Object?)? toEncodable;
   bool _isDone = false;
 
   _YamlSink({
@@ -97,13 +99,13 @@ class _YamlSink implements ChunkedConversionSink<Object?> {
   void close() {/* do nothing */}
 }
 
-/// Please dev follow [_JsonStringStringifier] code style
+/// Please dev follow `_JsonStringStringifier` code style
 class _YamlWriter {
   final StringSink _sink;
 
   final int indent;
   final bool shouldMultilineStringInBlock;
-  final Object? Function(dynamic)? toEncodable;
+  final Object? Function(Object?)? toEncodable;
 
   bool _canWriteBlock = false;
   int _indentLevel = -1;
@@ -137,6 +139,7 @@ class _YamlWriter {
     }
   }
 
+  // ignore: avoid_positional_boolean_parameters
   void writeBoolean(bool boolean) {
     if (!isInitialLine) _writeValueIndentation();
     _sink.write(boolean);

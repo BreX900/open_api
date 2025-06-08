@@ -12,11 +12,7 @@ class RoutesHandler {
   final SchemasRegistry schemasRegistry;
   final List<RouteHandler> routes;
 
-  RoutesHandler({
-    required this.config,
-    required this.schemasRegistry,
-    required this.routes,
-  });
+  RoutesHandler({required this.config, required this.schemasRegistry, required this.routes});
 
   OpenApi buildOpenApi() {
     final routesInPaths = routes.groupListsBy((e) => e.path);
@@ -34,9 +30,7 @@ class RoutesHandler {
         );
         return MapEntry(path, item);
       }),
-      components: ComponentsOpenApi(
-        securitySchemes: config.securitySchemes,
-      ),
+      components: ComponentsOpenApi(securitySchemes: config.securitySchemes),
       tags: _buildTags(),
     );
   }
@@ -51,18 +45,12 @@ class RoutesHandler {
   }
 
   ServerOpenApi _buildServerSpecs() {
-    return ServerOpenApi(
-      description: config.serverDescription,
-      url: config.serverUrl,
-    );
+    return ServerOpenApi(description: config.serverDescription, url: config.serverUrl);
   }
 
   List<TagOpenApi> _buildTags() {
-    return routes.map((e) => e.element.enclosingElement as ClassElement).toSet().map((e) {
-      return TagOpenApi(
-        name: e.displayName,
-        description: Doc.clean(e.documentationComment),
-      );
+    return routes.map((e) => e.element.enclosingElement3 as ClassElement).toSet().map((e) {
+      return TagOpenApi(name: e.displayName, description: Doc.clean(e.documentationComment));
     }).toList();
   }
 }

@@ -23,7 +23,7 @@ Builder buildOpenApi(BuilderOptions options) {
 
   return OpenApiBuilder(
     buildExtensions: {
-      '\$package\$': ['public/open_api.yaml']
+      '\$package\$': ['public/open_api.yaml'],
     },
     config: config,
   );
@@ -40,16 +40,13 @@ class OpenApiBuilder implements Builder {
   final Map<String, List<String>> buildExtensions;
   final Config config;
 
-  OpenApiBuilder({
-    required this.buildExtensions,
-    required this.config,
-  });
+  OpenApiBuilder({required this.buildExtensions, required this.config});
 
   /// Find members of a class annotated with [shelf_router.Route].
   List<ExecutableElement> getAnnotatedElementsOrderBySourceOffset(ClassElement cls) =>
       <ExecutableElement>[
         ...cls.methods.where(_routeType.hasAnnotationOfExact),
-        ...cls.accessors.where(_routeType.hasAnnotationOfExact)
+        ...cls.accessors.where(_routeType.hasAnnotationOfExact),
       ]..sort((a, b) => (a.nameOffset).compareTo(b.nameOffset));
 
   Stream<LibraryElement> _findLibraryWithRoute(BuildStep buildStep) {
@@ -67,17 +64,18 @@ class OpenApiBuilder implements Builder {
     }).toList();
 
     final routes = elements.expand((executableElement) {
-      final routesAnnotation =
-          ConstantReader(_routesType.firstAnnotationOf(executableElement.enclosingElement));
-      final openApiAnnotation =
-          ConstantReader(_openApiRouteType.firstAnnotationOfExact(executableElement));
+      final routesAnnotation = ConstantReader(
+        _routesType.firstAnnotationOf(executableElement.enclosingElement3),
+      );
+      final openApiAnnotation = ConstantReader(
+        _openApiRouteType.firstAnnotationOfExact(executableElement),
+      );
 
       final routePrefix = routesAnnotation.peek('prefix')?.stringValue ?? '';
 
-      return _routeType
-          .annotationsOfExact(executableElement)
-          .map(ConstantReader.new)
-          .map((routeAnnotation) {
+      return _routeType.annotationsOfExact(executableElement).map(ConstantReader.new).map((
+        routeAnnotation,
+      ) {
         final route = routeAnnotation.read('route').stringValue;
 
         return RouteHandler(

@@ -3,6 +3,7 @@ import 'dart:convert';
 /// Why has custom implementation?
 /// fhir_yaml: ^0.9.0 package not convert string with "\n" to multiline string
 /// yaml_writer: ^1.0.2 package add empty "random" line on yaml generated
+// TODO: Try replace with yaml_writer
 class YamlEncoder extends Converter<Map<String, dynamic>, String> {
   final int indent;
   final bool shouldMultilineStringInBlock;

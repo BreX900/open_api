@@ -30,7 +30,7 @@ class RouteHandler {
   }) : assert(method != 'GET' || requestBody == null);
 
   OperationOpenApi buildOperation() {
-    final classElement = element.enclosingElement as ClassElement;
+    final classElement = element.enclosingElement3 as ClassElement;
     final doc = Doc.from(element.documentationComment);
 
     return OperationOpenApi(
@@ -51,22 +51,20 @@ class RouteHandler {
         name: e.group(1)!,
         in$: ParameterInOpenApi.path,
         required: true,
-        schema: SchemaOpenApi(
-          type: TypeOpenApi.string,
-        ),
+        schema: SchemaOpenApi(type: TypeOpenApi.string),
       );
     });
     // TODO: check client generation
-    final queryParams =
-        (requestQuery?.element as ClassElement?)?.unnamedConstructor?.parameters.map((e) {
-      return ParameterOpenApi(
-        name: e.name,
-        in$: ParameterInOpenApi.query,
-        // TODO: throw if detect a nested object
-        schema: schemasRegistry.tryRegister(dartType: e.type),
-        required: e.type.nullabilitySuffix == NullabilitySuffix.none,
-      );
-    });
+    final queryParams = (requestQuery?.element as ClassElement?)?.unnamedConstructor?.parameters
+        .map((e) {
+          return ParameterOpenApi(
+            name: e.name,
+            in$: ParameterInOpenApi.query,
+            // TODO: throw if detect a nested object
+            schema: schemasRegistry.tryRegister(dartType: e.type),
+            required: e.type.nullabilitySuffix == NullabilitySuffix.none,
+          );
+        });
     return [...pathParams, ...?queryParams];
   }
 
@@ -76,16 +74,12 @@ class RouteHandler {
     return RequestBodyOpenApi(
       required: true,
       content: GroupMediaOpenApi(
-        json: MediaOpenApi(
-          schema: schemasRegistry.tryRegister(dartType: requestBody),
-        ),
+        json: MediaOpenApi(schema: schemasRegistry.tryRegister(dartType: requestBody)),
       ),
     );
   }
 
-  ResponseOpenApi get _emptyResponse => ResponseOpenApi(
-        description: 'Operation completed!',
-      );
+  ResponseOpenApi get _emptyResponse => ResponseOpenApi(description: 'Operation completed!');
 
   static final _responseType = TypeChecker.fromRuntime(Response);
 
@@ -105,9 +99,7 @@ class RouteHandler {
     return ResponseOpenApi(
       description: 'Operation completed!',
       content: GroupMediaOpenApi(
-        json: MediaOpenApi(
-          schema: schemasRegistry.tryRegister(dartType: responseType),
-        ),
+        json: MediaOpenApi(schema: schemasRegistry.tryRegister(dartType: responseType)),
       ),
     );
   }

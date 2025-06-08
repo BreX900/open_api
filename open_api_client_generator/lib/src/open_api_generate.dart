@@ -56,7 +56,7 @@ Future<void> generateApi({
     useNullSafetySyntax: true,
     allocator: Allocator(),
   );
-  formatter ??= DartFormatter(pageWidth: 100);
+  formatter ??= DartFormatter(pageWidth: 100, languageVersion: DartFormatter.latestLanguageVersion);
 
   final codecs = ApiCodecs(options: options);
 
