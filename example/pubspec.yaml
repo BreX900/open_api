@@ -3,11 +3,11 @@ description: A sample command-line application.
 publish_to: 'none'
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.8.0 <4.0.0'
 
 scripts:
   # To generate .g files:
-  runner:watch: dart run build_runner watch --delete-conflicting-outputs --verbose
+  generate-code: dart run build_runner watch --delete-conflicting-outputs --verbose
 
 dependencies:
   shelf: ^1.4.0

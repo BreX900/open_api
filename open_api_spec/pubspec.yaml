@@ -8,9 +8,9 @@ environment:
   sdk: ^3.8.0
 
 scripts:
-  build:library: index_generator
+  generate-library: index_generator
   # To generate .g files:
-  build:runner: dart run build_runner watch --delete-conflicting-outputs
+  generate-code: dart run build_runner watch --delete-conflicting-outputs
 
 # Add regular dependencies here.
 dependencies:

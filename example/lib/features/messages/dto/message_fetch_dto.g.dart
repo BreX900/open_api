@@ -6,7 +6,6 @@ part of 'message_fetch_dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MessageFetchDto _$MessageFetchDtoFromJson(Map<String, dynamic> json) =>
-    MessageFetchDto(
+MessageFetchDto _$MessageFetchDtoFromJson(Map<String, dynamic> json) => MessageFetchDto(
       chatId: json['chatId'] as String,
     );

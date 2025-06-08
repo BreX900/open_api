@@ -13,16 +13,15 @@ GroupMediaOpenApi _$GroupMediaOpenApiFromJson(Map json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = GroupMediaOpenApi(
-          json: $checkedConvert('application/json',
-              (v) => v == null ? null : MediaOpenApi.fromJson(v as Map)),
+          json: $checkedConvert(
+              'application/json', (v) => v == null ? null : MediaOpenApi.fromJson(v as Map)),
           urlEncoded: $checkedConvert('application/x-www-form-urlencoded',
               (v) => v == null ? null : MediaOpenApi.fromJson(v as Map)),
-          formData: $checkedConvert('multipart/form-data',
-              (v) => v == null ? null : MediaOpenApi.fromJson(v as Map)),
-          image: $checkedConvert('image/*',
-              (v) => v == null ? null : MediaOpenApi.fromJson(v as Map)),
-          any: $checkedConvert(
-              '*/*', (v) => v == null ? null : MediaOpenApi.fromJson(v as Map)),
+          formData: $checkedConvert(
+              'multipart/form-data', (v) => v == null ? null : MediaOpenApi.fromJson(v as Map)),
+          image:
+              $checkedConvert('image/*', (v) => v == null ? null : MediaOpenApi.fromJson(v as Map)),
+          any: $checkedConvert('*/*', (v) => v == null ? null : MediaOpenApi.fromJson(v as Map)),
         );
         return val;
       },
@@ -45,8 +44,7 @@ Map<String, dynamic> _$GroupMediaOpenApiToJson(GroupMediaOpenApi instance) {
   }
 
   writeNotNull('application/json', instance.json?.toJson());
-  writeNotNull(
-      'application/x-www-form-urlencoded', instance.urlEncoded?.toJson());
+  writeNotNull('application/x-www-form-urlencoded', instance.urlEncoded?.toJson());
   writeNotNull('multipart/form-data', instance.formData?.toJson());
   writeNotNull('image/*', instance.image?.toJson());
   writeNotNull('*/*', instance.any?.toJson());
@@ -66,8 +64,7 @@ MediaOpenApi _$MediaOpenApiFromJson(Map json) => $checkedCreate(
                     (k, e) => MapEntry(k as String, e),
                   ) ??
                   const {}),
-          schema: $checkedConvert(
-              'schema', (v) => SchemaOpenApi.fromJson(v as Map)),
+          schema: $checkedConvert('schema', (v) => SchemaOpenApi.fromJson(v as Map)),
         );
         return val;
       },
@@ -97,31 +94,26 @@ SchemaOpenApi _$SchemaOpenApiFromJson(Map json) => $checkedCreate(
           title: $checkedConvert('title', (v) => v as String?),
           description: $checkedConvert('description', (v) => v as String?),
           example: $checkedConvert('example', (v) => v),
-          type: $checkedConvert(
-              'type', (v) => $enumDecodeNullable(_$TypeOpenApiEnumMap, v)),
+          type: $checkedConvert('type', (v) => $enumDecodeNullable(_$TypeOpenApiEnumMap, v)),
           format: $checkedConvert(
               'format',
               (v) => $enumDecodeNullable(_$FormatOpenApiEnumMap, v,
                   unknownValue: JsonKey.nullForUndefinedEnumValue)),
-          enum$: $checkedConvert('enum',
-              (v) => (v as List<dynamic>?)?.map((e) => e as Object).toList()),
-          items: $checkedConvert('items',
-              (v) => v == null ? null : SchemaOpenApi.fromJson(v as Map)),
+          enum$: $checkedConvert(
+              'enum', (v) => (v as List<dynamic>?)?.map((e) => e as Object).toList()),
+          items:
+              $checkedConvert('items', (v) => v == null ? null : SchemaOpenApi.fromJson(v as Map)),
           properties: $checkedConvert(
               'properties',
               (v) => (v as Map?)?.map(
-                    (k, e) =>
-                        MapEntry(k as String, SchemaOpenApi.fromJson(e as Map)),
+                    (k, e) => MapEntry(k as String, SchemaOpenApi.fromJson(e as Map)),
                   )),
-          additionalProperties: $checkedConvert('additionalProperties',
-              (v) => v == null ? null : SchemaOpenApi.fromJson(v as Map)),
-          allOf: $checkedConvert(
-              'allOf',
-              (v) => (v as List<dynamic>?)
-                  ?.map((e) => SchemaOpenApi.fromJson(e as Map))
-                  .toList()),
-          required: $checkedConvert('required',
-              (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
+          additionalProperties: $checkedConvert(
+              'additionalProperties', (v) => v == null ? null : SchemaOpenApi.fromJson(v as Map)),
+          allOf: $checkedConvert('allOf',
+              (v) => (v as List<dynamic>?)?.map((e) => SchemaOpenApi.fromJson(e as Map)).toList()),
+          required: $checkedConvert(
+              'required', (v) => (v as List<dynamic>?)?.map((e) => e as String).toList()),
           nullable: $checkedConvert('nullable', (v) => v as bool? ?? false),
           default$: $checkedConvert('default', (v) => v),
           $original: $checkedConvert(r'$original', (v) => v),
@@ -149,8 +141,7 @@ Map<String, dynamic> _$SchemaOpenApiToJson(SchemaOpenApi instance) {
   writeNotNull('format', _$FormatOpenApiEnumMap[instance.format]);
   writeNotNull('enum', instance.enum$);
   writeNotNull('items', instance.items?.toJson());
-  writeNotNull('properties',
-      instance.properties?.map((k, e) => MapEntry(k, e.toJson())));
+  writeNotNull('properties', instance.properties?.map((k, e) => MapEntry(k, e.toJson())));
   writeNotNull('additionalProperties', instance.additionalProperties?.toJson());
   writeNotNull('allOf', instance.allOf?.map((e) => e.toJson()).toList());
   writeNotNull('required', instance.required);

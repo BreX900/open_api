@@ -43,11 +43,7 @@ class SchemasRegistry {
         example: example,
       );
     } else if (dartType.isDartCoreBool) {
-      return SchemaOpenApi(
-        description: description,
-        example: example,
-        type: TypeOpenApi.boolean,
-      );
+      return SchemaOpenApi(description: description, example: example, type: TypeOpenApi.boolean);
     } else if (dartType.isDartCoreNum || dartType.isDartCoreDouble) {
       return SchemaOpenApi(
         description: description,
@@ -80,11 +76,7 @@ class SchemasRegistry {
         description: description,
         example: example,
         type: TypeOpenApi.array,
-        items: tryRegister(
-          isBidirectional: isBidirectional,
-          doc: Doc.none,
-          dartType: typeArgument,
-        ),
+        items: tryRegister(isBidirectional: isBidirectional, doc: Doc.none, dartType: typeArgument),
       );
     } else if (dartType.isDartCoreMap) {
       final typeArguments = (dartType as ParameterizedType).typeArguments;
@@ -136,9 +128,11 @@ class SchemasRegistry {
           for (final property in properties)
             property.name: tryRegister(
               isBidirectional: isBidirectional,
-              doc: Doc.from(element.fields.firstWhereOrNull((e) {
-                return e.name == property.name;
-              })?.documentationComment),
+              doc: Doc.from(
+                element.fields.firstWhereOrNull((e) {
+                  return e.name == property.name;
+                })?.documentationComment,
+              ),
               dartType: property.type,
             ),
         },
@@ -146,22 +140,19 @@ class SchemasRegistry {
     }
 
     log.warning('I cant create $dartType component schema!');
-    return SchemaOpenApi(
-      description: 'Unknown value type.',
-    );
+    return SchemaOpenApi(description: 'Unknown value type.');
   }
 
-  void _checkRegistration({
-    required DartType dartType,
-    required String name,
-  }) {
+  void _checkRegistration({required DartType dartType, required String name}) {
     final prevDartTypes = _schemas[name];
 
     if (prevDartTypes == null) {
       _schemas[name] = {dartType};
     } else if (!prevDartTypes.contains(dartType)) {
-      log.warning('Already exist $name component schema with different type!\n'
-          '$prevDartTypes | $dartType');
+      log.warning(
+        'Already exist $name component schema with different type!\n'
+        '$prevDartTypes | $dartType',
+      );
       _schemas[name] = {...prevDartTypes, dartType};
     }
   }
@@ -172,9 +163,5 @@ class _ClassProperty {
   final DartType type;
   final String name;
 
-  const _ClassProperty({
-    required this.isRequired,
-    required this.type,
-    required this.name,
-  });
+  const _ClassProperty({required this.isRequired, required this.type, required this.name});
 }

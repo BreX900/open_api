@@ -15,8 +15,7 @@ InfoOpenApi _$InfoOpenApiFromJson(Map json) => $checkedCreate(
         final val = InfoOpenApi(
           title: $checkedConvert('title', (v) => v as String),
           description: $checkedConvert('description', (v) => v as String?),
-          termsOfService:
-              $checkedConvert('termsOfService', (v) => v as String?),
+          termsOfService: $checkedConvert('termsOfService', (v) => v as String?),
           version: $checkedConvert('version', (v) => v as String),
         );
         return val;
@@ -74,8 +73,8 @@ TagOpenApi _$TagOpenApiFromJson(Map json) => $checkedCreate(
         final val = TagOpenApi(
           name: $checkedConvert('name', (v) => v as String),
           description: $checkedConvert('description', (v) => v as String?),
-          externalDocs: $checkedConvert('externalDocs',
-              (v) => v == null ? null : ExternalDocsOpenApi.fromJson(v as Map)),
+          externalDocs: $checkedConvert(
+              'externalDocs', (v) => v == null ? null : ExternalDocsOpenApi.fromJson(v as Map)),
         );
         return val;
       },

@@ -9,20 +9,14 @@ import 'package:source_gen/source_gen.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 Builder buildRouting(BuilderOptions options) {
-  return LibraryBuilder(
-    const RoutingGenerator(),
-    generatedExtension: '.routing.dart',
-  );
+  return LibraryBuilder(const RoutingGenerator(), generatedExtension: '.routing.dart');
 }
 
 class _RouterAnnotated {
   final Routes annotation;
   final ClassElement element;
 
-  const _RouterAnnotated({
-    required this.annotation,
-    required this.element,
-  });
+  const _RouterAnnotated({required this.annotation, required this.element});
 }
 
 class RoutingGenerator extends GeneratorForAnnotation<Routing> {
@@ -50,7 +44,8 @@ class RoutingGenerator extends GeneratorForAnnotation<Routing> {
       return "..mount('${e.annotation.prefix}', ${e.element.name}().router)";
     });
     final importRouters = routers.map((e) => "import '${e.element.library.identifier}';");
-    final result = "import 'package:shelf_router/shelf_router.dart';\n"
+    final result =
+        "import 'package:shelf_router/shelf_router.dart';\n"
         '${importRouters.map((e) => '$e\n').join()}'
         '\n'
         'Router get $varName => Router()${mountedRouters.map((e) => '\n  $e').join('')};';
@@ -62,10 +57,11 @@ class RoutingGenerator extends GeneratorForAnnotation<Routing> {
     return Stream<AssetId>.empty()
         .mergeAll(generateFor.map(buildStep.findAssets))
         .concurrentAsyncMap((asset) async {
-      final library = await buildStep.resolver.libraryFor(asset);
+          final library = await buildStep.resolver.libraryFor(asset);
 
-      return _readRouters(LibraryReader(library));
-    }).expand((list) => list);
+          return _readRouters(LibraryReader(library));
+        })
+        .expand((list) => list);
   }
 
   Iterable<_RouterAnnotated> _readRouters(LibraryReader library) sync* {
@@ -78,9 +74,7 @@ class RoutingGenerator extends GeneratorForAnnotation<Routing> {
       final annotation = ConstantReader(_routesType.firstAnnotationOf(element));
 
       yield _RouterAnnotated(
-        annotation: const Routes().copyWith(
-          prefix: annotation.peek('prefix')?.stringValue,
-        ),
+        annotation: const Routes().copyWith(prefix: annotation.peek('prefix')?.stringValue),
         element: element,
       );
     }

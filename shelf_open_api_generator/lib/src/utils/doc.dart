@@ -11,11 +11,7 @@ class Doc {
   String? get summaryAndDescription =>
       summary != null && description != null ? '$summary\n$description' : (summary ?? description);
 
-  const Doc({
-    required this.summary,
-    required this.description,
-    required this.example,
-  });
+  const Doc({required this.summary, required this.description, required this.example});
 
   factory Doc.from(String? doc) {
     if (doc == null) return none;
@@ -52,11 +48,7 @@ class Doc {
       description = lines.skip(2).join('\n');
     }
 
-    return Doc(
-      summary: summary,
-      description: description,
-      example: example,
-    );
+    return Doc(summary: summary, description: description, example: example);
   }
 
   static String? clean(String? doc) {

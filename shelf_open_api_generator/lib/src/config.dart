@@ -4,11 +4,7 @@ import 'package:open_api_specification/open_api_spec.dart';
 part 'config.g.dart';
 
 class ConfigSerializable extends JsonSerializable {
-  const ConfigSerializable()
-      : super(
-          createFactory: true,
-          fieldRename: FieldRename.snake,
-        );
+  const ConfigSerializable() : super(createFactory: true, fieldRename: FieldRename.snake);
 }
 
 @ConfigSerializable()
