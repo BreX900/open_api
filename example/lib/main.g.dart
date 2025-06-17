@@ -1,10 +1,11 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'message_fetch_dto.dart';
+part of 'main.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
+// RoutingGenerator
 // **************************************************************************
 
-MessageFetchDto _$MessageFetchDtoFromJson(Map<String, dynamic> json) =>
-    MessageFetchDto(chatId: json['chatId'] as String);
+Router _$ApiControllerRouter(ApiController $) => Router()
+  ..mount(r'/v1', $.chats.call)
+  ..mount(r'/v1', $.messages.call);

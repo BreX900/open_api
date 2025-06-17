@@ -3,15 +3,19 @@
 part of 'chats_controller.dart';
 
 // **************************************************************************
-// ShelfRouterGenerator
+// RoutingGenerator
 // **************************************************************************
 
-Router _$ChatsControllerRouter(ChatsController service) {
-  final router = Router();
-  router.add(
-    'POST',
-    r'/chats',
-    service.createChatForReport,
-  );
-  return router;
-}
+Router _$ChatsControllerRouter(ChatsController $) => Router()
+  ..add('POST', r'/chats', (Request request) async {
+    return await $.createChatForReport(request);
+  })
+  ..add('POST', r'/chats', (Request request) async {
+    return await $.createChatForReportV2(
+      request,
+      await $parseBodyAs(
+        request,
+        (data) => ChatCreateDto.fromJson(data! as Map<String, dynamic>),
+      ),
+    );
+  });

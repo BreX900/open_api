@@ -6,6 +6,7 @@ import 'package:open_api_specification/open_api_spec.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_open_api_generator/src/schemas_registry.dart';
 import 'package:shelf_open_api_generator/src/utils/doc.dart';
+import 'package:shelf_open_api_generator/src/utils/routing_utils.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -19,6 +20,8 @@ class RouteHandler {
   final DartType? requestQuery;
   final DartType? requestBody;
 
+  final RoutingHandler routing;
+
   RouteHandler({
     required this.element,
     required this.schemasRegistry,
@@ -27,6 +30,7 @@ class RouteHandler {
     required this.security,
     required this.requestQuery,
     required this.requestBody,
+    required this.routing,
   }) : assert(method != 'GET' || requestBody == null);
 
   OperationOpenApi buildOperation() {
@@ -47,16 +51,24 @@ class RouteHandler {
 
   List<ParameterOpenApi> _buildParameters() {
     final pathParams = RegExp(r'<([^>]+)>').allMatches(path).map((e) {
+      final name = e.group(1)!;
+
+      final parameterType = routing.pathParameters.firstWhereOrNull((e) => e.name == name)?.type;
+      final schema = schemasRegistry.tryRegisterV2(
+        object: false,
+        iterables: false,
+        dartType: parameterType,
+      );
       return ParameterOpenApi(
-        name: e.group(1)!,
+        name: name,
         in$: ParameterInOpenApi.path,
         required: true,
-        schema: SchemaOpenApi(type: TypeOpenApi.string),
+        schema: schema ?? SchemaOpenApi(type: TypeOpenApi.string),
       );
     });
     // TODO: check client generation
-    final queryParams = (requestQuery?.element as ClassElement?)?.unnamedConstructor?.parameters
-        .map((e) {
+    final queryParams =
+        (requestQuery?.element as ClassElement?)?.unnamedConstructor?.parameters.map((e) {
           return ParameterOpenApi(
             name: e.name,
             in$: ParameterInOpenApi.query,
@@ -64,12 +76,21 @@ class RouteHandler {
             schema: schemasRegistry.tryRegister(dartType: e.type),
             required: e.type.nullabilitySuffix == NullabilitySuffix.none,
           );
+        }) ??
+        routing.queryParameters.map((parameter) {
+          return ParameterOpenApi(
+            name: parameter.name,
+            in$: ParameterInOpenApi.query,
+            schema:
+                schemasRegistry.tryRegisterV2(object: false, dartType: parameter.type) ??
+                SchemaOpenApi(type: TypeOpenApi.string),
+          );
         });
-    return [...pathParams, ...?queryParams];
+    return [...pathParams, ...queryParams];
   }
 
   RequestBodyOpenApi? _buildRequestBody() {
-    final requestBody = this.requestBody;
+    final requestBody = this.requestBody ?? routing.bodyParameter?.type;
     if (requestBody == null) return null;
     return RequestBodyOpenApi(
       required: true,

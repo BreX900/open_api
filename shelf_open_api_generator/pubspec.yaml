@@ -16,6 +16,7 @@ dependencies:
   open_api_specification: ^1.0.0
   shelf: ^1.4.0
   shelf_router: ^1.1.3
+#  shelf_routing: ^1.1.3
   shelf_open_api: ^1.0.0
 
   collection: ^1.17.1
@@ -44,3 +45,5 @@ dependency_overrides:
     path: ../shelf_open_api
   open_api_specification:
     path: ../open_api_spec
+#  shelf_routing:
+#    path: ../../mek-packages/shelf_packages/shelf_routing

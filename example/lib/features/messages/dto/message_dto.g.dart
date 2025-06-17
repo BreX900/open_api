@@ -6,7 +6,5 @@ part of 'message_dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Map<String, dynamic> _$MessageDtoToJson(MessageDto instance) => <String, dynamic>{
-      'chatId': instance.chatId,
-      'content': instance.content,
-    };
+Map<String, dynamic> _$MessageDtoToJson(MessageDto instance) =>
+    <String, dynamic>{'chatId': instance.chatId, 'content': instance.content};

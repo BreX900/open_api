@@ -3,6 +3,11 @@ library shelf_open_api;
 
 import 'package:meta/meta_meta.dart';
 
+@TargetKind.classType
+class OpenApi {
+  const OpenApi();
+}
+
 @TargetKind.method
 class OpenApiRoute {
   final List<Map<String, List<String>>> security;

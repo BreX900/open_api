@@ -6,6 +6,5 @@ part of 'chat_create_dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ChatCreateDto _$ChatCreateDtoFromJson(Map<String, dynamic> json) => ChatCreateDto(
-      title: json['title'] as String,
-    );
+ChatCreateDto _$ChatCreateDtoFromJson(Map<String, dynamic> json) =>
+    ChatCreateDto(title: json['title'] as String);

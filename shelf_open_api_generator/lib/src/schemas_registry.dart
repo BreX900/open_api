@@ -8,9 +8,6 @@ import 'package:shelf_open_api_generator/src/utils/doc.dart';
 import 'package:source_gen/source_gen.dart';
 
 class SchemasRegistry {
-  static final _dateTimeType = TypeChecker.fromRuntime(DateTime);
-  static final _uriType = TypeChecker.fromRuntime(Uri);
-
   final Map<String, Set<DartType>> _schemas = {};
 
   SchemaOpenApi tryRegister({
@@ -18,6 +15,66 @@ class SchemasRegistry {
     Doc doc = Doc.none,
     required DartType dartType,
   }) {
+    return _SchemaResolver(
+      object: true,
+      iterables: true,
+      isBidirectional: isBidirectional,
+      registry: this,
+    ).resolve(dartType: dartType, doc: doc);
+  }
+
+  SchemaOpenApi? tryRegisterV2({
+    bool object = true,
+    bool iterables = true,
+    bool isBidirectional = true,
+    Doc doc = Doc.none,
+    required DartType? dartType,
+  }) {
+    if (dartType == null) return null;
+    try {
+      return _SchemaResolver(
+        object: object,
+        iterables: iterables,
+        isBidirectional: isBidirectional,
+        registry: this,
+      ).resolve(dartType: dartType, doc: doc);
+    } on _UnsupportedRegistrationType {
+      return null;
+    }
+  }
+
+  void _checkRegistration({required DartType dartType, required String name}) {
+    final prevDartTypes = _schemas[name];
+
+    if (prevDartTypes == null) {
+      _schemas[name] = {dartType};
+    } else if (!prevDartTypes.contains(dartType)) {
+      log.warning(
+        'Already exist $name component schema with different type!\n'
+        '$prevDartTypes | $dartType',
+      );
+      _schemas[name] = {...prevDartTypes, dartType};
+    }
+  }
+}
+
+class _SchemaResolver {
+  static final _dateTimeType = TypeChecker.fromRuntime(DateTime);
+  static final _uriType = TypeChecker.fromRuntime(Uri);
+
+  final bool object;
+  final bool iterables;
+  final bool isBidirectional;
+  final SchemasRegistry registry;
+
+  _SchemaResolver({
+    required this.object,
+    required this.iterables,
+    required this.isBidirectional,
+    required this.registry,
+  });
+
+  SchemaOpenApi resolve({Doc doc = Doc.none, required DartType dartType}) {
     final element = dartType.element;
 
     final description = doc.summaryAndDescription;
@@ -27,7 +84,7 @@ class SchemasRegistry {
       final doc = Doc.from(element.documentationComment);
       final enumValues = element.fields.where((element) => element.isEnumConstant);
 
-      _checkRegistration(dartType: dartType, name: element.name);
+      registry._checkRegistration(dartType: dartType, name: element.name);
       return SchemaOpenApi(
         title: element.name,
         description: doc.summaryAndDescription,
@@ -69,16 +126,22 @@ class SchemasRegistry {
             ? FormatOpenApi.dateTime
             : (_uriType.isAssignableFromType(dartType) ? FormatOpenApi.uri : null),
       );
-    } else if (dartType.isDartCoreIterable || dartType.isDartCoreList) {
+    }
+
+    if (!iterables) throw _UnsupportedRegistrationType();
+    if (dartType.isDartCoreIterable || dartType.isDartCoreList) {
       final typeArgument = (dartType as ParameterizedType).typeArguments.single;
 
       return SchemaOpenApi(
         description: description,
         example: example,
         type: TypeOpenApi.array,
-        items: tryRegister(isBidirectional: isBidirectional, doc: Doc.none, dartType: typeArgument),
+        items: resolve(doc: Doc.none, dartType: typeArgument),
       );
-    } else if (dartType.isDartCoreMap) {
+    }
+
+    if (!object) throw _UnsupportedRegistrationType();
+    if (dartType.isDartCoreMap) {
       final typeArguments = (dartType as ParameterizedType).typeArguments;
 
       if (!typeArguments[0].isDartCoreString) {
@@ -89,10 +152,7 @@ class SchemasRegistry {
         description: description,
         example: example,
         type: TypeOpenApi.object,
-        additionalProperties: tryRegister(
-          isBidirectional: isBidirectional,
-          dartType: typeArguments[1],
-        ),
+        additionalProperties: resolve(dartType: typeArguments[1]),
       );
     } else if (element is ClassElement) {
       final List<_ClassProperty> properties;
@@ -117,7 +177,7 @@ class SchemasRegistry {
         }).toList();
       }
 
-      _checkRegistration(dartType: dartType, name: element.name);
+      registry._checkRegistration(dartType: dartType, name: element.name);
 
       return SchemaOpenApi(
         title: element.name,
@@ -126,8 +186,7 @@ class SchemasRegistry {
         required: properties.where((e) => e.isRequired).map((e) => e.name).toList(),
         properties: {
           for (final property in properties)
-            property.name: tryRegister(
-              isBidirectional: isBidirectional,
+            property.name: resolve(
               doc: Doc.from(
                 element.fields.firstWhereOrNull((e) {
                   return e.name == property.name;
@@ -142,20 +201,6 @@ class SchemasRegistry {
     log.warning('I cant create $dartType component schema!');
     return SchemaOpenApi(description: 'Unknown value type.');
   }
-
-  void _checkRegistration({required DartType dartType, required String name}) {
-    final prevDartTypes = _schemas[name];
-
-    if (prevDartTypes == null) {
-      _schemas[name] = {dartType};
-    } else if (!prevDartTypes.contains(dartType)) {
-      log.warning(
-        'Already exist $name component schema with different type!\n'
-        '$prevDartTypes | $dartType',
-      );
-      _schemas[name] = {...prevDartTypes, dartType};
-    }
-  }
 }
 
 class _ClassProperty {
@@ -165,3 +210,5 @@ class _ClassProperty {
 
   const _ClassProperty({required this.isRequired, required this.type, required this.name});
 }
+
+class _UnsupportedRegistrationType implements Exception {}
